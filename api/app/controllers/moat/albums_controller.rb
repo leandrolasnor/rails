@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AlbumsController < ApiController
+class Moat::AlbumsController < ApiController
   def search
     authorize!(:read, Album)
     deliver(SearchAlbumsService.call(album_search_params))

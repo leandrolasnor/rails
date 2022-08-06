@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ArtistsController < ApiController
+class Moat::ArtistsController < ApiController
   def list
     authorize!(:create, Album)
     deliver(GetArtistsService.call(list_param))
