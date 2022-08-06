@@ -10,7 +10,7 @@ RSpec.describe Moat::Api::Album, type: :module do
   let(:moat_url) { "#{ENV.fetch('MOAT_URI')}?artist_id=#{album.artist_id}" }
   let(:moat_headers) { { 'Basic' => Rails.application.credentials.dig(:moat, :token) } }
 
-  context 'when .artist bring a response code is equal 200' do
+  xcontext 'when .artist bring a response code is equal 200' do
     let(:moat_response) { instance_double(HTTParty::Response, body: moat_response_body, code: 200) }
 
     let(:moat_response_body) { { id: album.artist_id, name: 'Artist', twitter: '@Artist' } }
@@ -30,7 +30,7 @@ RSpec.describe Moat::Api::Album, type: :module do
     end
   end
 
-  context 'when .artist bring a response code is not equal 200' do
+  xcontext 'when .artist bring a response code is not equal 200' do
     let(:moat_response) { instance_double(HTTParty::Response, body: '400 Bad Request', code: 400) }
 
     let(:log_message) { { from: "Moat::Artist.find(#{album.artist_id})", code: moat_response.code, body: moat_response.body } }
