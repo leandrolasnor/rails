@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe ArtistsController, type: :request do
+RSpec.describe Moat::ArtistsController, type: :request do
   let(:headers_credentials) do
     sign_in_response = sign_in
     {
@@ -18,7 +18,7 @@ RSpec.describe ArtistsController, type: :request do
     end
 
     it 'renders a successful response' do
-      get(artists_path, headers: headers_credentials, as: :json)
+      get(moat_artists_path, headers: headers_credentials, as: :json)
       expect(response.body).to eq successful_body_content
       expect(GetArtistsService).to have_received(:call).once
       expect(response).to be_successful

@@ -34,7 +34,7 @@ RSpec.describe Moat::AlbumsController, type: :request do
     end
 
     it 'renders a successful response' do
-      get(album_path(album.id), headers: headers_credentials, as: :json)
+      get(moat_album_path(album.id), headers: headers_credentials, as: :json)
       expect(response.body).to eq successful_body_content
       expect(ShowAlbumService).to have_received(:call).once
       expect(response).to be_successful
@@ -47,7 +47,7 @@ RSpec.describe Moat::AlbumsController, type: :request do
     end
 
     it 'renders a successful response' do
-      get(albums_search_path, headers: headers_credentials, as: :json)
+      get(moat_albums_search_path, headers: headers_credentials, as: :json)
       expect(response.body).to eq successful_body_content
       expect(SearchAlbumsService).to have_received(:call).once
       expect(response).to be_successful
@@ -60,7 +60,7 @@ RSpec.describe Moat::AlbumsController, type: :request do
     end
 
     it 'renders a successful response' do
-      put(album_path(album.id), params: { album: { name: Faker::Games::Pokemon.name } }, headers: headers_credentials, as: :json)
+      put(moat_album_path(album.id), params: { album: { name: Faker::Games::Pokemon.name } }, headers: headers_credentials, as: :json)
       expect(response.body).to eq successful_body_content
       expect(UpdateAlbumService).to have_received(:call).once
       expect(response).to be_successful
@@ -73,7 +73,7 @@ RSpec.describe Moat::AlbumsController, type: :request do
     end
 
     it 'renders a successful response' do
-      patch(album_path(album.id), params: { album: { name: Faker::Games::Pokemon.name } }, headers: headers_credentials, as: :json)
+      patch(moat_album_path(album.id), params: { album: { name: Faker::Games::Pokemon.name } }, headers: headers_credentials, as: :json)
       expect(response.body).to eq successful_body_content
       expect(UpdateAlbumService).to have_received(:call).once
       expect(response).to be_successful
@@ -86,7 +86,7 @@ RSpec.describe Moat::AlbumsController, type: :request do
     end
 
     it 'renders a successful response' do
-      post(albums_path, params: { album: album_attributes }, headers: headers_credentials, as: :json)
+      post(moat_albums_path, params: { album: album_attributes }, headers: headers_credentials, as: :json)
       expect(response.body).to eq successful_body_content
       expect(CreateAlbumService).to have_received(:call).once
       expect(response).to be_successful
@@ -100,7 +100,7 @@ RSpec.describe Moat::AlbumsController, type: :request do
 
     context 'when its rendered a unauthorized response' do
       it 'the user is not admin' do
-        delete(album_path(album.id), headers: headers_credentials, as: :json)
+        delete(moat_album_path(album.id), headers: headers_credentials, as: :json)
         expect(response.body.blank?).to eq true
         expect(RemoveAlbumService).not_to have_received(:call)
         expect(response).to be_unauthorized
@@ -113,7 +113,7 @@ RSpec.describe Moat::AlbumsController, type: :request do
       end
 
       it 'the user is admin' do
-        delete(album_path(album.id), headers: admin_headers_credentials, as: :json)
+        delete(moat_album_path(album.id), headers: admin_headers_credentials, as: :json)
         expect(response.body).to eq successful_body_content
         expect(RemoveAlbumService).to have_received(:call).once
         expect(response).to be_successful
