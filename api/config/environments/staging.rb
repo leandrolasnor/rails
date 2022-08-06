@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -33,7 +35,7 @@ Rails.application.configure do
 
   # config.action_mailer.perform_caching = false
 
-  config.hosts << ENV.fetch('HOST') { "moat-task.herokuapp.com" }
+  config.hosts << ENV.fetch('HOST', 'railsliar.herokuapp.com')
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -47,10 +49,10 @@ Rails.application.configure do
   # ActionCable Route
   config.action_cable.mount_path = '/cable'
 
-  # config.web_socket_server_url = "wss://#{ENV.fetch('HOST') { "moat-task.herokuapp.com" }}/cable"
+  # config.web_socket_server_url = "wss://#{ENV.fetch('HOST', 'railsliar.herokuapp.com')}/cable"
 
   # ActionCable whitelist
-  config.action_cable.allowed_request_origins = [/http:\/\/*/, /https:\/\/*/, nil]
+  config.action_cable.allowed_request_origins = [%r{http://*}, %r{https://*}, nil]
 
   # Raises error for missing translations.
   # config.action_view.raise_on_missing_translations = true
