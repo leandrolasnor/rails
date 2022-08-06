@@ -4,7 +4,7 @@ setup:
     RACK_ENV: staging
 build:
   docker:
-    web: rails-api/Dockerfile.stg
+    web: api/Dockerfile.stg
   config:
     RAILS_ENV: staging
     RACK_ENV: staging
