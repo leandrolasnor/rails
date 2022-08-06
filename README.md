@@ -1,2 +1,2 @@
-# rails
-Proof of Concept
+## Ruby on Rails
+#### Proof of Concept
