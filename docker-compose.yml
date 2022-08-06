@@ -1,0 +1,42 @@
+version: '3.7'
+services:
+    api:
+        build: ./rails-api
+        container_name: api
+        command: sh -c "rm -f tmp/pids/server.pid && bundle && bundle exec rails s -p 3000 -b '0.0.0.0'"
+        stdin_open: true
+        tty: true
+        volumes:
+            - ./rails-api:/app
+        ports:
+            - "3000:3000"
+        depends_on:
+            - redis
+            - sidekiq
+            - cable
+    sidekiq:
+        build: ./rails-api
+        container_name: sidekiq
+        command: sh -c "bundle && bundle exec sidekiq"
+        volumes:
+            - ./rails-api:/app
+        depends_on:
+            - redis
+    cable:
+        build: ./rails-api
+        container_name: cable
+        command: puma -p 28080 cable/config.ru
+        volumes:
+            - ./rails-api:/app
+        ports:
+            - '28080:28080'
+        depends_on:
+            - redis
+            - sidekiq
+    redis:
+        image: redis:alpine
+        container_name: redis
+        environment: 
+            ALLOW_EMPTY_PASSWORD: 'yes'
+        ports:
+            - "6379:6379"
