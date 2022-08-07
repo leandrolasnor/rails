@@ -28,7 +28,7 @@ RSpec.describe Albums, type: :module do
 
       it 'album not found' do
         described_class.show(params_invalid) do |instance, error|
-          expect(instance).to eq(nil)
+          expect(instance).to be(nil)
           expect(error).to be_a(Array)
         end
       end
@@ -54,14 +54,14 @@ RSpec.describe Albums, type: :module do
     it 'a new album with success' do
       described_class.create(params) do |album, error|
         expect(album).to be_a(Album)
-        expect(error).to eq(nil)
+        expect(error).to be_nil
       end
     end
 
     context 'when create raise error' do
       it 'fields are invalid' do
         described_class.create(params_invalid) do |instance, error|
-          expect(instance).to eq(nil)
+          expect(instance).to be_nil
           expect(error).to be_a(Array)
         end
       end
@@ -93,7 +93,7 @@ RSpec.describe Albums, type: :module do
       described_class.update(params) do |album, error|
         expect(album).to be_a(Album)
         expect(album[:name]).to eq('Teste')
-        expect(error).to eq(nil)
+        expect(error).to be_nil
       end
     end
 
@@ -102,14 +102,14 @@ RSpec.describe Albums, type: :module do
 
       it 'fields are invalids' do
         described_class.update(params_invalid) do |album, error|
-          expect(album).to eq(nil)
+          expect(album).to be_nil
           expect(error).to be_a(Array)
         end
       end
 
       it 'album not found' do
         described_class.update(params_invalid_id) do |instance, error|
-          expect(instance).to eq(nil)
+          expect(instance).to be_nil
           expect(error).to be_a(Array)
           expect(error.first).to eq("Couldn't find Album with 'id'=999")
         end
@@ -140,7 +140,7 @@ RSpec.describe Albums, type: :module do
         expect(payload[:albums].first).to eq(album)
         expect(payload[:albums].count).to eq(1)
         expect(payload[:pagination]).to eq(pagination)
-        expect(error).to eq(nil)
+        expect(error).to be_nil
       end
     end
 
@@ -151,7 +151,7 @@ RSpec.describe Albums, type: :module do
         described_class.search(params_invalid) do |payload, error|
           expect(payload[:albums]).to be_a(ActiveRecord::Relation)
           expect(payload[:albums]).to eq([])
-          expect(error).to eq(nil)
+          expect(error).to be_nil
         end
       end
     end
@@ -169,11 +169,11 @@ RSpec.describe Albums, type: :module do
       described_class.delete(params) do |instance, error|
         expect(instance).to eq(album)
         expect { Album.find(album[:id]) }.to raise_error(ActiveRecord::RecordNotFound)
-        expect(error).to eq(nil)
+        expect(error).to be_nil
       end
     end
 
-    context 'when raise a [ActiveRecord::RecordNotFound, ActiveRecord::RecordNotDestroyed] ' do
+    context 'when raise a [ActiveRecord::RecordNotFound, ActiveRecord::RecordNotDestroyed]' do
       let(:params_deny_destroy) { { id: 9999 } }
       let(:params_invalid) { { id: 999 } }
       let(:record_not_found_error) { ActiveRecord::RecordNotFound.new }
@@ -186,14 +186,14 @@ RSpec.describe Albums, type: :module do
 
       it 'album not found' do
         described_class.delete(params_invalid) do |instance, error|
-          expect(instance).to eq(nil)
+          expect(instance).to be_nil
           expect(error).to be_a(Array)
         end
       end
 
       it 'album cannot destroyed' do
         described_class.delete(params_deny_destroy) do |instance, error|
-          expect(instance).to eq(nil)
+          expect(instance).to be_nil
           expect(error).to be_a(Array)
         end
       end

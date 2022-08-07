@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Pagination
   extend ActiveSupport::Concern
   attr_reader :items_count
@@ -20,7 +22,7 @@ module Pagination
   end
 
   def paginate_offset
-    (current_page-1)*per_page
+    (current_page - 1) * per_page
   end
 
   def paginate
@@ -28,12 +30,12 @@ module Pagination
       @items_count = it.count(:id)
       @pages_count = (items_count / per_page.to_f).ceil
       items = it.limit(per_page).offset(paginate_offset)
-      items = ActiveModel::Serializer::CollectionSerializer.new(items,serializer: serializer) if serializer.present?
+      items = ActiveModel::Serializer::CollectionSerializer.new(items, serializer: serializer) if serializer.present?
       items
     }
   end
 
   def pagination
-    { pages_count:pages_count, per_page:per_page, current_page:current_page, items_count:items_count }
-  end  
+    { pages_count: pages_count, per_page: per_page, current_page: current_page, items_count: items_count }
+  end
 end

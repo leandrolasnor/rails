@@ -13,7 +13,7 @@ release:
     - rake db:migrate
   image: web
 run:
-  web: sh -c "bundle exec puma -C config/puma/api-staging.rb"
+  web: sh -c "bundle exec puma -C config/puma/api_staging.rb"
   worker:
     command:
       - sh -c "bundle exec sidekiq -e staging"
