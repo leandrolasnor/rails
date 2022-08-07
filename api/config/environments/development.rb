@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -49,7 +51,7 @@ Rails.application.configure do
   config.action_cable.url = 'ws://cable:28080'
 
   # ActionCable whitelist
-  config.action_cable.allowed_request_origins = [/http:\/\/*/, /https:\/\/*/, nil]
+  config.action_cable.allowed_request_origins = [%r{http://*}, %r{https://*}, nil]
 
 
   # Raises error for missing translations.
