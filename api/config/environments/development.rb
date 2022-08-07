@@ -53,7 +53,6 @@ Rails.application.configure do
   # ActionCable whitelist
   config.action_cable.allowed_request_origins = [%r{http://*}, %r{https://*}, nil]
 
-
   # Raises error for missing translations.
   # config.action_view.raise_on_missing_translations = true
 
