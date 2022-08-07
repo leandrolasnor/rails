@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
@@ -18,7 +20,7 @@ m = Module.new do
   end
 
   def env_var_version
-    ENV["BUNDLER_VERSION"]
+    ENV.fetch('BUNDLER_VERSION')
   end
 
   def cli_arg_version
@@ -47,23 +49,24 @@ m = Module.new do
   def lockfile
     lockfile =
       case File.basename(gemfile)
-      when "gems.rb" then gemfile.sub(/\.rb$/, gemfile)
-      else "#{gemfile}.lock"
+        when 'gems.rb' then gemfile.sub(/\.rb$/, gemfile)
+      else
+        "#{gemfile}.lock"
       end
     File.expand_path(lockfile)
   end
 
   def lockfile_version
     return unless File.file?(lockfile)
+
     lockfile_contents = File.read(lockfile)
     return unless lockfile_contents =~ /\n\nBUNDLED WITH\n\s{2,}(#{Gem::Version::VERSION_PATTERN})\n/
+
     Regexp.last_match(1)
   end
 
   def bundler_version
-    @bundler_version ||=
-      env_var_version || cli_arg_version ||
-        lockfile_version
+    @bundler_version ||= env_var_version || cli_arg_version || lockfile_version
   end
 
   def bundler_requirement
@@ -73,9 +76,9 @@ m = Module.new do
 
     requirement = bundler_gem_version.approximate_recommendation
 
-    return requirement unless Gem::Version.new(Gem::VERSION) < Gem::Version.new("2.7.0")
+    return requirement unless Gem::Version.new(Gem::VERSION) < Gem::Version.new('2.7.0')
 
-    requirement += ".a" if bundler_gem_version.prerelease?
+    requirement += '.a' if bundler_gem_version.prerelease?
 
     requirement
   end
@@ -88,27 +91,28 @@ m = Module.new do
 
   def activate_bundler
     gem_error = activation_error_handling do
-      gem "bundler", bundler_requirement
+      gem 'bundler', bundler_requirement
     end
     return if gem_error.nil?
     require_error = activation_error_handling do
-      require "bundler/version"
+      require 'bundler/version'
     end
     return if require_error.nil? && Gem::Requirement.new(bundler_requirement).satisfied_by?(Gem::Version.new(Bundler::VERSION))
-    warn "Activating bundler (#{bundler_requirement}) failed:\n#{gem_error.message}\n\nTo install the version of bundler this project requires, run `gem install bundler -v '#{bundler_requirement}'`"
+
+    warn("Activating bundler (#{bundler_requirement}) failed:\n#{gem_error.message}\n\nTo install the version of bundler this project requires, run `gem install bundler -v '#{bundler_requirement}'`")
     exit 42
   end
 
   def activation_error_handling
     yield
     nil
-  rescue StandardError, LoadError => e
-    e
+  rescue StandardError, LoadError => error
+    error
   end
 end
 
 m.load_bundler!
 
 if m.invoked_as_script?
-  load Gem.bin_path("bundler", "bundle")
+  load(Gem.bin_path('bundler', 'bundle'))
 end
