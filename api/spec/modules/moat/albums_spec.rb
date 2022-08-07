@@ -15,7 +15,7 @@ RSpec.describe Albums, type: :module do
     it 'a album with success' do
       described_class.show(params) do |instance, error|
         expect(instance).to eq(album)
-        expect(error).to eq(nil)
+        expect(error).to be_nil
       end
     end
 
@@ -28,7 +28,7 @@ RSpec.describe Albums, type: :module do
 
       it 'album not found' do
         described_class.show(params_invalid) do |instance, error|
-          expect(instance).to be(nil)
+          expect(instance).to be_nil
           expect(error).to be_a(Array)
         end
       end

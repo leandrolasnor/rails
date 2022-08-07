@@ -101,7 +101,7 @@ RSpec.describe Moat::AlbumsController, type: :request do
     context 'when its rendered a unauthorized response' do
       it 'the user is not admin' do
         delete(moat_album_path(album.id), headers: headers_credentials, as: :json)
-        expect(response.body.blank?).to eq true
+        expect(response.body.blank?).to be(true)
         expect(RemoveAlbumService).not_to have_received(:call)
         expect(response).to be_unauthorized
       end
