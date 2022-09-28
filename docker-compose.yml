@@ -14,6 +14,16 @@ services:
             - redis
             - sidekiq
             - cable
+    meilisearch:
+        image: getmeili/meilisearch:v0.28
+        container_name: meilisearch
+        ports:
+            - "7700:7700"
+        volumes:
+            - ./api/db/meilisearch/data.ms:/meili_data/data.ms
+        environment:
+            - MEILI_MASTER_KEY=4f6bdbe90bcd297b6d
+            - MEILI_NO_ANALYTICS=true
     sidekiq:
         build: ./api
         container_name: sidekiq
@@ -25,7 +35,7 @@ services:
     cable:
         build: ./api
         container_name: cable
-        command: puma -p 28080 cable/config.ru
+        command: sh -c "rm -f tmp/pids/server.pid && puma -p 28080 cable/config.ru"
         volumes:
             - ./api:/app
         ports:
