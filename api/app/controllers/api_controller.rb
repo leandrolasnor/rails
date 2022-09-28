@@ -7,6 +7,7 @@ class ApiController < ApplicationController
   rescue_from StandardError, with: :error
   rescue_from CanCan::AccessDenied, with: :deny_access
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
+  rescue_from ActionController::ParameterMissing, with: :parameter_missing
 
   def current_ability
     @current_ability ||= Ability.new(current_user)
@@ -25,12 +26,24 @@ class ApiController < ApplicationController
   end
 
   def error(error)
-    Rails.logger.error(error.inspect)
+    Rails.logger.error(error.message)
     render body: nil, status: :internal_server_error
+  end
+
+  def parameter_missing(error)
+    Rails.logger.error(error.message)
+    render body: nil, status: :bad_request
   end
 
   def pagination_params
     { pagination: { current_page: request.headers['current-page'] || 1, per_page: request.headers['per-page'] || 10 } }
+  end
+
+  def search_pagination_params
+    limit = request.headers.fetch('per-page', 10).to_i
+    current_page = request.headers.fetch('current-page', 1).to_i
+    offset = (current_page - 1) * limit
+    { pagination: { limit: limit, offset: offset } }
   end
 
   def channel_params
