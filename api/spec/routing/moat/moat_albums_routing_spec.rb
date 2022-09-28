@@ -8,8 +8,18 @@ RSpec.describe Moat::AlbumsController, type: :routing do
       expect(get: '/moat/albums/search').to route_to('moat/albums#search')
     end
 
-    it 'route to #show' do
-      expect(get: '/moat/albums/1').to route_to('moat/albums#show', id: '1')
+    context 'on #show' do
+      context 'without id param' do
+        it 'end-point not found' do
+          expect(get: '/albums').to route_to(controller: 'api', action: 'not_found', path: 'albums')
+        end
+      end
+
+      context 'with id param' do
+        it 'end-point show' do
+          expect(get: '/moat/albums/1').to route_to('moat/albums#show', id: '1')
+        end
+      end
     end
 
     it 'route to #create' do
@@ -26,14 +36,6 @@ RSpec.describe Moat::AlbumsController, type: :routing do
 
     it 'route to #destroy' do
       expect(delete: '/moat/albums/1').to route_to('moat/albums#destroy', id: '1')
-    end
-
-    describe 'route to #show' do
-      context 'without id param' do
-        it 'end-point not found' do
-          expect(get: '/albums').to route_to(controller: 'api', action: 'not_found', path: 'albums')
-        end
-      end
     end
   end
 end

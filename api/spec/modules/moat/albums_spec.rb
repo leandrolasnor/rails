@@ -2,14 +2,14 @@
 
 require 'rails_helper'
 
-RSpec.describe Albums, type: :module do
+RSpec.describe Moat::Albums, type: :module do
   context 'on show' do
-    let(:album) { AlbumSerializer.new(create(:album)).serializable_hash }
+    let(:album) { Moat::AlbumSerializer.new(create(:album)).serializable_hash }
     let(:params) { { id: album[:id] } }
     let(:params_invalid) { { id: 999 } }
 
     before do
-      allow_any_instance_of(Album).to receive(:artist).and_return({})
+      allow_any_instance_of(Moat::Album).to receive(:artist).and_return({})
     end
 
     it 'a album with success' do
@@ -23,7 +23,7 @@ RSpec.describe Albums, type: :module do
       let(:record_not_found_error) { ActiveRecord::RecordNotFound.new }
 
       before do
-        allow(Album).to receive(:find).with(999).and_raise(record_not_found_error)
+        allow(Moat::Album).to receive(:find).with(999).and_raise(record_not_found_error)
       end
 
       it 'album not found' do
@@ -38,7 +38,7 @@ RSpec.describe Albums, type: :module do
       let(:error) { StandardError.new }
 
       before do
-        allow(Album).to receive(:find).with(999).and_raise(error)
+        allow(Moat::Album).to receive(:find).with(999).and_raise(error)
       end
 
       it 'rescue a StandardError' do
@@ -53,7 +53,7 @@ RSpec.describe Albums, type: :module do
 
     it 'a new album with success' do
       described_class.create(params) do |album, error|
-        expect(album).to be_a(Album)
+        expect(album).to be_a(Moat::Album)
         expect(error).to be_nil
       end
     end
@@ -71,7 +71,7 @@ RSpec.describe Albums, type: :module do
       let(:error) { StandardError.new }
 
       before do
-        allow(Albums::Factory).to receive(:make).with(params_invalid).and_raise(error)
+        allow(Moat::Albums::Factory).to receive(:make).with(params_invalid).and_raise(error)
       end
 
       it 'rescue a StandardError' do
@@ -82,16 +82,16 @@ RSpec.describe Albums, type: :module do
 
   context 'on update' do
     let(:album) { create(:album) }
-    let(:params) { AlbumSerializer.new(album).serializable_hash.merge!(name: 'Teste', artist_id: 1) }
+    let(:params) { Moat::AlbumSerializer.new(album).serializable_hash.merge!(name: 'Teste', artist_id: 1) }
     let(:params_invalid) { params.merge!(year: 1500) }
 
     before do
-      allow_any_instance_of(Album).to receive(:artist).and_return({})
+      allow_any_instance_of(Moat::Album).to receive(:artist).and_return({})
     end
 
     it 'a album with success' do
       described_class.update(params) do |album, error|
-        expect(album).to be_a(Album)
+        expect(album).to be_a(Moat::Album)
         expect(album[:name]).to eq('Teste')
         expect(error).to be_nil
       end
@@ -111,7 +111,7 @@ RSpec.describe Albums, type: :module do
         described_class.update(params_invalid_id) do |instance, error|
           expect(instance).to be_nil
           expect(error).to be_a(Array)
-          expect(error.first).to eq("Couldn't find Album with 'id'=999")
+          expect(error.first).to eq("Couldn't find Moat::Album with 'id'=999")
         end
       end
     end
@@ -120,7 +120,7 @@ RSpec.describe Albums, type: :module do
       let(:error) { StandardError.new }
 
       before do
-        allow_any_instance_of(Album).to receive(:update!).with(params.slice(:name, :year, :artist_id)).and_raise(error)
+        allow_any_instance_of(Moat::Album).to receive(:update!).with(params.slice(:name, :year, :artist_id)).and_raise(error)
       end
 
       it 'rescue a StandardError' do
@@ -155,6 +155,22 @@ RSpec.describe Albums, type: :module do
         end
       end
     end
+
+    context 'when a StandardError is raised' do
+      let(:error) { StandardError.new('Some Error') }
+
+      before do
+        allow(Moat::Album).to receive(:where).and_raise(error)
+      end
+
+      it 'is possible to deal' do
+        described_class.search(params) do |payload, errors|
+          expect(errors).to be_a(Array)
+          expect(payload).to be_nil
+          expect(errors.first).to be('Some Error')
+        end
+      end
+    end
   end
 
   context 'on delete' do
@@ -168,7 +184,7 @@ RSpec.describe Albums, type: :module do
     it 'a album with success' do
       described_class.delete(params) do |instance, error|
         expect(instance).to eq(album)
-        expect { Album.find(album[:id]) }.to raise_error(ActiveRecord::RecordNotFound)
+        expect { Moat::Album.find(album[:id]) }.to raise_error(ActiveRecord::RecordNotFound)
         expect(error).to be_nil
       end
     end
@@ -180,8 +196,8 @@ RSpec.describe Albums, type: :module do
       let(:record_not_destroyed_error) { ActiveRecord::RecordNotDestroyed.new('you cannot destroy', create(:album)) }
 
       before do
-        allow(Albums::Sweeper).to receive(:make).with(params_invalid).and_raise(record_not_found_error)
-        allow(Albums::Sweeper).to receive(:make).with(params_deny_destroy).and_raise(record_not_destroyed_error)
+        allow(Moat::Albums::Sweeper).to receive(:make).with(params_invalid).and_raise(record_not_found_error)
+        allow(Moat::Albums::Sweeper).to receive(:make).with(params_deny_destroy).and_raise(record_not_destroyed_error)
       end
 
       it 'album not found' do
@@ -203,7 +219,7 @@ RSpec.describe Albums, type: :module do
       let(:error) { StandardError.new }
 
       before do
-        allow(Albums::Sweeper).to receive(:make).with(params).and_raise(error)
+        allow(Moat::Albums::Sweeper).to receive(:make).with(params).and_raise(error)
       end
 
       it 'rescue a StandardError' do

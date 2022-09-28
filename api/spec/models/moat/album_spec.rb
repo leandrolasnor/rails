@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Album, type: :model do
+RSpec.describe Moat::Album, type: :model do
   subject(:album) { create(:album, artist_id: 5) }
 
   it 'must have validate_presence_of' do
@@ -18,13 +18,7 @@ RSpec.describe Album, type: :model do
   context 'on Moat' do
     context 'and ::Api' do
       context 'and ::Album' do
-        before do
-          allow_any_instance_of(Moat::Api::Album).to receive(:artist).and_return('artist')
-        end
-
-        it 'must can get the associate artist' do
-          expect(album.artist).to eq('artist')
-        end
+        it { expect(album).to respond_to(:artist) }
       end
     end
   end

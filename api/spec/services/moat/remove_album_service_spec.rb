@@ -2,32 +2,31 @@
 
 require 'rails_helper'
 
-RSpec.describe RemoveAlbumService, type: :service do
-  context 'when calling service' do
+RSpec.describe Moat::RemoveAlbumService, type: :service do
+  context 'when calling the service' do
     let(:params) { { id: 1 } }
     let(:service) { described_class.call(params) }
 
     before do
-      allow(HandleRemoveAlbumWorker).to receive(:perform_async).with(params)
+      allow(Moat::HandleRemoveAlbumWorker).to receive(:perform_async).with(params)
     end
 
-    it 'must to return successful body content' do
+    it 'must to return successful response' do
       expect(service).to eq successful_response
-      expect(HandleRemoveAlbumWorker).to have_received(:perform_async).with(params).once
+      expect(Moat::HandleRemoveAlbumWorker).to have_received(:perform_async).with(params).once
     end
 
     context 'when rescue a StandardError' do
       let(:error) { StandardError.new('Error') }
-      let(:service) { described_class.call(params) }
 
       before do
-        allow(Rails.logger).to receive(:error).with(error.inspect)
-        allow(HandleRemoveAlbumWorker).to receive(:perform_async).with(params).and_raise(error)
+        allow(Rails.logger).to receive(:error).with(error.message)
+        allow(Moat::HandleRemoveAlbumWorker).to receive(:perform_async).with(params).and_raise(error)
       end
 
-      it 'but did can to handle' do
+      it "it's can to deal" do
         expect(service).to eq(unsuccessful_response)
-        expect(Rails.logger).to have_received(:error).with(error.inspect).once
+        expect(Rails.logger).to have_received(:error).with(error.message).once
       end
     end
   end

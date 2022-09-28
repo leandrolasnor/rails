@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe CreateAlbumService, type: :service do
+RSpec.describe Moat::CreateAlbumService, type: :service do
   context 'when calling service' do
     let(:params) do
       {
@@ -14,12 +14,12 @@ RSpec.describe CreateAlbumService, type: :service do
     let(:service) { described_class.call(params) }
 
     before do
-      allow(HandleCreateAlbumWorker).to receive(:perform_async).with(params)
+      allow(Moat::HandleCreateAlbumWorker).to receive(:perform_async).with(params)
     end
 
     it 'must to return successful body content' do
       expect(service).to eq successful_response
-      expect(HandleCreateAlbumWorker).to have_received(:perform_async).with(params).once
+      expect(Moat::HandleCreateAlbumWorker).to have_received(:perform_async).with(params).once
     end
 
     context 'when rescue a error' do
@@ -34,13 +34,13 @@ RSpec.describe CreateAlbumService, type: :service do
       let(:service) { described_class.call(params) }
 
       before do
-        allow(Rails.logger).to receive(:error).with(error.inspect)
-        allow(HandleCreateAlbumWorker).to receive(:perform_async).with(params).and_raise(error)
+        allow(Rails.logger).to receive(:error).with(error.message)
+        allow(Moat::HandleCreateAlbumWorker).to receive(:perform_async).with(params).and_raise(error)
       end
 
       it 'but did can to handle' do
         expect(service).to eq(unsuccessful_response)
-        expect(Rails.logger).to have_received(:error).with(error.inspect).once
+        expect(Rails.logger).to have_received(:error).with(error.message).once
       end
     end
   end

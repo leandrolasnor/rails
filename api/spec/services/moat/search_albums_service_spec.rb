@@ -2,49 +2,33 @@
 
 require 'rails_helper'
 
-RSpec.describe SearchAlbumsService, type: :service do
-  context 'when calling service' do
-    context 'when there is query param' do
-      let(:params) { { query: 'some albums name' } }
-      let(:service) { described_class.call(params) }
+RSpec.describe Moat::SearchAlbumsService, type: :service do
+  context 'when calling the service' do
+    let(:params) { { query: 'some albums name' } }
+    let(:params_worker) { { query: "LOWER(name) like '%some albums name%'" } }
+    let(:service) { described_class.call(params) }
 
-      before do
-        allow(HandleSearchAlbumsWorker).to receive(:perform_async).with(params)
-      end
-
-      it 'must to return successful body content' do
-        expect(service).to eq successful_response
-        expect(HandleSearchAlbumsWorker).to have_received(:perform_async).with(params).once
-      end
+    before do
+      allow(Moat::HandleSearchAlbumsWorker).to receive(:perform_async).with(params_worker)
     end
 
-    context 'when there isnt query param' do
-      let(:params) { { query: "LOWER(name) like '%%'" } }
-      let(:service) { described_class.call({}) }
-
-      before do
-        allow(HandleSearchAlbumsWorker).to receive(:perform_async).with(params)
-      end
-
-      it 'must to return successful body content' do
-        expect(service).to eq successful_response
-        expect(HandleSearchAlbumsWorker).to have_received(:perform_async).with(params).once
-      end
+    it 'must to return successful body content' do
+      expect(service).to eq successful_response
+      expect(Moat::HandleSearchAlbumsWorker).to have_received(:perform_async).with(params_worker).once
     end
 
     context 'when rescue a StandardError' do
-      let(:params) { { query: "LOWER(name) like '%%'" } }
       let(:error) { StandardError.new('Error') }
-      let(:service) { described_class.call({}) }
+      let(:service) { described_class.call(params) }
 
       before do
-        allow(Rails.logger).to receive(:error).with(error.inspect)
-        allow(HandleSearchAlbumsWorker).to receive(:perform_async).with(params).and_raise(error)
+        allow(Rails.logger).to receive(:error).with(error.message)
+        allow(Moat::HandleSearchAlbumsWorker).to receive(:perform_async).with(params_worker).and_raise(error)
       end
 
-      it 'but did can to handle' do
+      it "it's can to deal" do
         expect(service).to eq(unsuccessful_response)
-        expect(Rails.logger).to have_received(:error).with(error.inspect).once
+        expect(Rails.logger).to have_received(:error).with(error.message).once
       end
     end
   end
