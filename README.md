@@ -21,5 +21,5 @@ Ao final deverá ter cinto containers rodando
 
 ****Para validar as funcionalidade aqui implementadas, utilize este [front-end](https://github.com/leandrolasnor/react) em react****
 
-#### Para todas os testes no terminal fora do container
+#### Para todas os testes de fora do container
 `docker exec -it rails rspec spec`
