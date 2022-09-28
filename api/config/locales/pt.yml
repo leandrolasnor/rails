@@ -1,0 +1,8 @@
+pt:
+  messages:
+    errors:
+      cepla:
+        error_on_address_capture_process: 'Erro no processo de captura de endereço.'
+      validations:
+        zip_addreses: 'Preencha o campo zip com uma sequência de 8 caracteres numéricos'
+      

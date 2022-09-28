@@ -31,3 +31,5 @@
 
 en:
   hello: "Hello world"
+  error_on_http_service_from_address_capture: 'Error on HttpService from address capture'
+  message_internal_server_error: 'HTTP 500 Internal Server Error'
