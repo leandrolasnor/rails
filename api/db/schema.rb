@@ -10,7 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_01_185951) do
+ActiveRecord::Schema.define(version: 2022_09_01_005826) do
+
+  create_table "addreses", force: :cascade do |t|
+    t.string "address", null: false
+    t.string "district", null: false
+    t.string "city", null: false
+    t.string "state", null: false
+    t.string "zip", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["address", "district", "city"], name: "index_addreses_on_address_and_district_and_city", unique: true
+    t.index ["address"], name: "index_addreses_on_address"
+    t.index ["city"], name: "index_addreses_on_city"
+    t.index ["district"], name: "index_addreses_on_district"
+    t.index ["zip"], name: "index_addreses_on_zip", unique: true
+  end
+
+  create_table "address_assignments", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "address_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["address_id", "user_id"], name: "index_address_assignments_on_address_id_and_user_id", unique: true
+    t.index ["address_id"], name: "index_address_assignments_on_address_id"
+    t.index ["user_id"], name: "index_address_assignments_on_user_id"
+  end
 
   create_table "albums", force: :cascade do |t|
     t.integer "artist_id", null: false
@@ -18,6 +43,7 @@ ActiveRecord::Schema.define(version: 2022_06_01_185951) do
     t.integer "year", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["name"], name: "index_albums_on_name"
   end
 
   create_table "users", force: :cascade do |t|
