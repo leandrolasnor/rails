@@ -1,18 +1,20 @@
 # frozen_string_literal: true
 
-class Moat::ArtistsController < ApiController
-  def list
-    authorize!(:create, Album)
-    deliver(GetArtistsService.call(list_param))
-  end
+module ::Moat
+  class ArtistsController < ApiController
+    def index
+      authorize!(:create, Album)
+      deliver(Moat::GetArtistsService.call(index_param))
+    end
 
-  private
+    private
 
-  def artist_params
-    params.fetch(:artist, {}).merge(pagination_params).merge(channel_params)
-  end
+    def artist_params
+      params.fetch(:artist, {}).merge(pagination_params).merge(channel_params)
+    end
 
-  def list_param
-    artist_params.permit(:channel)
+    def index_param
+      artist_params.permit(:channel)
+    end
   end
 end
