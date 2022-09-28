@@ -6,7 +6,6 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
   include DeviseTokenAuth::Concerns::User
-  self.primary_key = 'uid'
 
   enum role: { user: 0, admin: 1 }
   liberal_enum :role

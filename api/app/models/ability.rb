@@ -7,7 +7,8 @@ class Ability
     if user.admin?
       can(:manage, :all)
     elsif user.user?
-      can([:create, :read, :update], Album)
+      can([:create, :read, :update], Moat::Album)
+      can([:create, :read], Latech::Address)
     end
     # Define abilities for the passed in user here. For example:
     #
