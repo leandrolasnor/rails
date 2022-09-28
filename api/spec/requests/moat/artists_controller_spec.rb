@@ -14,13 +14,13 @@ RSpec.describe Moat::ArtistsController, type: :request do
 
   describe 'GET /list' do
     before do
-      allow(GetArtistsService).to receive(:call).and_return({ content: { code: 0, message: 'ok' }, status: :ok })
+      allow(Moat::GetArtistsService).to receive(:call).and_return({ content: { code: 0, message: 'ok' }, status: :ok })
     end
 
     it 'renders a successful response' do
       get(moat_artists_path, headers: headers_credentials, as: :json)
       expect(response.body).to eq successful_body_content
-      expect(GetArtistsService).to have_received(:call).once
+      expect(Moat::GetArtistsService).to have_received(:call).once
       expect(response).to be_successful
     end
   end

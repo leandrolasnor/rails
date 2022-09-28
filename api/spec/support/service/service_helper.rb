@@ -1,15 +1,19 @@
 # frozen_string_literal: true
 
 module Service
+  attr_writer :successful_body_content
+  attr_writer :successful_response
+  attr_writer :unsuccessful_response
+
   def successful_body_content
-    { code: 0, message: 'ok' }.to_json
+    @successful_body_content ||= { code: 0, message: 'ok' }.to_json
   end
 
   def successful_response
-    { content: { code: 0, message: 'ok' }, status: :ok }
+    @successful_response ||= { content: { code: 0, message: 'ok' }, status: :ok }
   end
 
   def unsuccessful_response
-    { content: { code: -1, message: 'failure' }, status: :internal_server_error }
+    @unsuccessful_response ||= { content: { code: -1, message: 'failure' }, status: :internal_server_error }
   end
 end
