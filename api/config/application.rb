@@ -35,5 +35,10 @@ module RailsApi
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+    config.time_zone = 'Brasilia'
+
+    config.i18n.available_locales = [:pt, :en]
+    config.i18n.default_locale = :en
+    config.i18n.enforce_available_locales = false
   end
 end

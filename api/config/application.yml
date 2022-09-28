@@ -12,10 +12,12 @@
 
 default: &default
   MOAT_URI:  'https://www.moat.ai/api/task'
+  CEPLA_URI:  'http://cep.la'
 
 development: &development
   <<: *default
   REDIS_URL: 'redis://redis:6379'
+  MEILISEARCH_URL: 'http://meilisearch:7700/'
 
 staging:
   <<: *default

@@ -22,9 +22,9 @@ Rails.application.configure do
       'Cache-Control' => "public, max-age=#{2.days.to_i}"
     }
   else
-    config.action_controller.perform_caching = false
+    config.action_controller.perform_caching = true
 
-    config.cache_store = :null_store
+    config.cache_store = :redis_cache_store, { url: ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" } } # :null_store
   end
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
@@ -37,6 +37,8 @@ Rails.application.configure do
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
+
+  config.logger = ActiveSupport::Logger.new(config.paths['log'].first, 1, 50 * 1024 * 1024)
 
   # Raise an error on page load if there are pending migrations.
   config.active_record.migration_error = :page_load
