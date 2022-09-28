@@ -20,3 +20,6 @@ Ao final deverá ter cinto containers rodando
 [rotas da api](http://localhost/3000/rails/info/routes)
 
 ****Para validar as funcionalidade aqui implementadas, utilize este [front-end](https://github.com/leandrolasnor/react) em react****
+
+#### Para todas os testes no terminal fora do container
+`docker exec -it rails rspec spec`
