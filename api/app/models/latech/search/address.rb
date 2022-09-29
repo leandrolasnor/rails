@@ -7,7 +7,7 @@ module ::Latech
 
       after_touch :index!
 
-      meilisearch index_uid: :latech_search_address do
+      meilisearch index_uid: Rails.env.test? ? :_address : :address do
         attribute :address
         attribute :district
         attribute :city
@@ -16,15 +16,15 @@ module ::Latech
         attribute :user do
           address_assignments.pluck(:user_id)
         end
-        displayed_attributes [:address, :district, :city, :state, :zip]
+        displayed_attributes [:id, :address, :district, :city, :state, :zip]
         searchable_attributes [:address, :district, :city, :state, :zip]
         filterable_attributes [:id, :zip, :user]
         sortable_attributes [:address]
       end
 
       def self.search(query: '', params: {})
-        Meilisearch::Index.latech_search_address do |index|
-          index.search(query, params).symbolize_keys!
+        Meilisearch::Index.address do |index|
+          index.search(query, params).deep_symbolize_keys!
         end
       end
     end

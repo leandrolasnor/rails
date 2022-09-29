@@ -6,8 +6,8 @@ module ::Meilisearch
     ACCESS_KEY = Rails.application.credentials.dig(:meilisearch, :access_key)
 
     class << self
-      def latech_search_address
-        yield(MeiliSearch::Client.new(URL, ACCESS_KEY).index(__method__))
+      def address
+        yield(MeiliSearch::Client.new(URL, ACCESS_KEY).index(Rails.env.test? ? __method__.to_s.insert(0, '_') : __method__))
       end
     end
   end
