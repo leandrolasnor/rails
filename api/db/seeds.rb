@@ -12,6 +12,7 @@ User.destroy_all
 Moat::Album.destroy_all
 Latech::Search::Address.destroy_all
 Latech::Search::Address.clear_index!
+Rails.cache.clear
 
 user1 = User.create!(name: 'Teste', email: 'teste@teste.com', password: '123456', password_confirmation: '123456', role: 0)
 
@@ -25,7 +26,7 @@ user2 = User.create!(name: 'Other Teste', email: 'otherteste@teste.com', passwor
   )
 end
 
-100.times do
+20.times do
   Latech::Search::Address.create! do |a|
     a.address = Faker::Address.street_address
     a.district = Faker::Name.middle_name
