@@ -132,7 +132,7 @@ RSpec.describe Moat::Albums, type: :module do
   context 'on search' do
     let(:pagination) { { pages_count: 1, per_page: 10, current_page: 1, items_count: 1 } }
     let(:album) { create(:album) }
-    let(:params) { { query: "LOWER(name) like '%#{album[:name].downcase!}%'" } }
+    let(:params) { { query: "LOWER(name) like '%#{album[:name].split.pop.downcase!}%'" } }
 
     it 'gets albums' do
       described_class.search(params) do |payload, error|
