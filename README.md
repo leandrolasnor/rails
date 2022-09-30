@@ -1,25 +1,20 @@
-## Ruby on Rails
-### Proof of Concept
+#### Rails API | Docker | Redis | MeiliSearch | ActionCable | Sidekiq
 
-Após clonar o repositório
+Faça o clone do repositório `git clone git@github.com:leandrolasnor/rails.git`
 
-`cd rails`
+Entre na pasta do projeto `cd rails`
 
-Rode os serviços via Docker
+Rode os serviços via Docker :whale: `docker compose up -d`
 
-`docker compose up -d`
+Rode as *migrations* e *seed* `docker exec -it rails rails db:reset`
 
-Ao final deverá ter cinto containers rodando
+Agora rode `docker ps` e deverá ter cinto containers de pé
 
-`rails`
-`meilisearch`
-`sidekiq`
-`redis`
-`cable`
+`rails` `redis` `sidekiq`
+`meilisearch` `cable`
 
-[rotas da api](http://localhost/3000/rails/info/routes)
+####[routes here](http://localhost/3000/rails/info/routes)
 
 ****Para validar as funcionalidade aqui implementadas, utilize este [front-end](https://github.com/leandrolasnor/react) em react****
 
-#### Para todas os testes de fora do container
-`docker exec -it rails rspec spec`
+##### Rode os teste `docker exec -it rails rspec spec`
