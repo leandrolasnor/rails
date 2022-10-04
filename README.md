@@ -1,4 +1,4 @@
-#### Rails API | Docker | Redis | MeiliSearch | ActionCable | Sidekiq
+## Rails API | Docker | Redis | MeiliSearch | ActionCable | Sidekiq
 
 Faça o clone do repositório `git clone git@github.com:leandrolasnor/rails.git`
 
