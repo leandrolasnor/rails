@@ -13,7 +13,7 @@ Agora rode `docker ps` e deverá ter cinto containers de pé
 `rails` `redis` `sidekiq`
 `meilisearch` `cable`
 
-####[routes here](http://localhost/3000/rails/info/routes)
+#### [routes](http://localhost/3000/rails/info/routes)
 
 ****Para validar as funcionalidade aqui implementadas, utilize este [front-end](https://github.com/leandrolasnor/react) em react****
 
