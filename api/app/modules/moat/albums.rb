@@ -11,8 +11,6 @@ module ::Moat
         yield(album, nil)
       rescue ActiveRecord::RecordNotFound => error
         yield(nil, [error.message])
-      rescue StandardError => error
-        raise error
       end
 
       def create(params)
@@ -20,8 +18,6 @@ module ::Moat
         yield(album, nil)
       rescue ActiveRecord::RecordInvalid => error
         yield(nil, error.record.errors.full_messages)
-      rescue StandardError => error
-        raise error
       end
 
       def update(params)
@@ -32,8 +28,6 @@ module ::Moat
         yield(nil, error.record.errors.full_messages)
       rescue ActiveRecord::RecordNotFound => error
         yield(nil, [error.message])
-      rescue StandardError => error
-        raise error
       end
 
       def search(params)
@@ -51,8 +45,6 @@ module ::Moat
         yield(nil, error.record.errors.full_messages)
       rescue ActiveRecord::RecordNotFound => error
         yield(nil, [error.message])
-      rescue StandardError => error
-        raise error
       end
     end
 
@@ -75,8 +67,6 @@ module ::Moat
           end
           album.save!
           album
-        rescue StandardError => error
-          raise error
         end
       end
     end
