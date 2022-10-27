@@ -14,6 +14,7 @@ services:
             - redis
             - sidekiq
             - cable
+            - meilisearch
     meilisearch:
         image: getmeili/meilisearch:v0.28
         container_name: meilisearch
