@@ -17,4 +17,4 @@ Agora rode `docker compose ps` e deverá ter cinto containers de pé
 
 ****Para validar as funcionalidade aqui implementadas, utilize este [front-end](https://github.com/leandrolasnor/react) em react****
 
-##### Rode os teste `docker exec -it rails rspec spec`
+##### Rode os teste `docker compose run --rm api rspec spec`
