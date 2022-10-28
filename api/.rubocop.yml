@@ -202,7 +202,7 @@ Style/MethodCallWithArgsParentheses:
     - put
     - patch
     - delete
-  IgnoredMethods:
+  AllowedMethods:
     - raise
     - exit
     - render
