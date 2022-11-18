@@ -21,6 +21,10 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :estimates do
+    post 'quantity_of_can_of_paint', action: :quantity_of_can_of_paint, as: :quantity_of_can_of_paint
+  end
+
   mount Sidekiq::Web => '/sidekiq'
   mount_devise_token_auth_for 'User', at: 'auth', controllers: { sessions: 'overrides/sessions', registrations: 'overrides/registrations' }
 
