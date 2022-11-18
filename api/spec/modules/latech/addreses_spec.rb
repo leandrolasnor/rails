@@ -156,7 +156,7 @@ RSpec.describe Latech::Addreses, type: :module do
 
       context 'with HTTParty::Error' do
         let(:headers) { { accept: 'application/json' } }
-        let(:url) { "#{ENV.fetch('CEPLA_URI')}/#{params[:zip]}" }
+        let(:url) { "#{ENV.fetch(LATECH_CEPLA_URI)}/#{params[:zip]}" }
         let(:error) { HTTParty::Error.new('Some Error') }
 
         before do
