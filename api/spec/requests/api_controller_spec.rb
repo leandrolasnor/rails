@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe ApiController, type: :request do
+RSpec.describe ApiController do
   let(:address) { create(:address) }
   let(:headers_credentials) do
     sign_in_response = sign_in

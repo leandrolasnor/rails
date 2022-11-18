@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Moat::AlbumsController, type: :routing do
+RSpec.describe Moat::AlbumsController do
   describe 'routing' do
     it 'route to #search' do
       expect(get: '/moat/albums/search').to route_to('moat/albums#search')

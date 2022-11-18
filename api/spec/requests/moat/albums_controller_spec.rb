@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Moat::AlbumsController, type: :request do
+RSpec.describe Moat::AlbumsController do
   let(:album) { create(:album) }
   let(:album_attributes) { build(:album).attributes }
   let(:headers_credentials) do

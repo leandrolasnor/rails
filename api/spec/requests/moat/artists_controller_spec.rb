@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Moat::ArtistsController, type: :request do
+RSpec.describe Moat::ArtistsController do
   let(:headers_credentials) do
     sign_in_response = sign_in
     {

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Latech::AddresesController, type: :routing do
+RSpec.describe Latech::AddresesController do
   describe 'routing' do
     it 'route to #search' do
       expect(get: '/latech/addreses/search').to route_to('latech/addreses#search')
