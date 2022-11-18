@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe Latech::Cepla::Http::Services::GetAddress, type: :context do
   let(:headers) { { accept: 'application/json' } }
-  let(:url) { "#{ENV.fetch('CEPLA_URI')}/#{zip}" }
+  let(:url) { "#{ENV.fetch(LATECH_CEPLA_URI)}/#{zip}" }
   let(:zip) { 23058500 }
   let(:service) { described_class.call!(zip: zip) }
 

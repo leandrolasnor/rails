@@ -33,3 +33,8 @@ en:
   hello: "Hello world"
   error_on_http_service_from_address_capture: 'Error on HttpService from address capture'
   message_internal_server_error: 'HTTP 500 Internal Server Error'
+  walls_quantity_limit: "The quantity of walls inside a hall must be a value between one e four"
+  wall_area_limit: "Walls must have area between 1 and 50 square meters"
+  windows_and_doors_limit_area: "The total area of the doors and windows must be a maximum of 50% of the wall area"
+  wall_with_doors_height_limit: "The height of walls with a door must be at least 30 centimeters higher than the height of the door"
+  bad_formatted: "field is badly formatted"

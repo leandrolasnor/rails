@@ -18,7 +18,7 @@ module ::Latech
       end
 
       def uri
-        ENV.fetch('CEPLA_URI')
+        ENV.fetch(LATECH_CEPLA_URI)
       end
     end
   end
