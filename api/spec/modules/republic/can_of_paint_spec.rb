@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe CanOfPaint, type: :module do
+RSpec.describe Republic::CanOfPaint, type: :module do
   subject { described_class.for_paint(area) }
 
   describe '#for_paint' do

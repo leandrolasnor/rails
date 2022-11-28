@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe ::Geometric::Wall do
-  subject { described_class.new(Wall.new(attributes)) }
+RSpec.describe Republic::Geometric::Wall do
+  subject { described_class.new(Republic::Wall.new(attributes)) }
 
   describe '.area' do
     context 'when there are doors and windows on walls' do

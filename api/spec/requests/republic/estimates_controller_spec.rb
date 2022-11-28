@@ -2,7 +2,16 @@
 
 require 'rails_helper'
 
-RSpec.describe EstimatesController do
+RSpec.describe Republic::EstimatesController do
+  let(:headers_credentials) do
+    sign_in_response = sign_in
+    {
+      uid: sign_in_response.dig(:headers, 'uid'),
+      client: sign_in_response.dig(:headers, 'client'),
+      'access-token': sign_in_response.dig(:headers, 'access-token')
+    }
+  end
+
   describe '#quantity_of_can_of_paint' do
     context 'with correct params' do
       let(:params) do
@@ -57,7 +66,7 @@ RSpec.describe EstimatesController do
       end
 
       before do
-        post(estimates_quantity_of_can_of_paint_path, params: params, as: :json)
+        post(republic_estimates_quantity_of_can_of_paint_path, params: params, headers: headers_credentials, as: :json)
       end
 
       it 'must receive quantity of can of paint' do
@@ -145,7 +154,7 @@ RSpec.describe EstimatesController do
       end
 
       before do
-        post(estimates_quantity_of_can_of_paint_path, params: params, as: :json)
+        post(republic_estimates_quantity_of_can_of_paint_path, params: params, headers: headers_credentials, as: :json)
       end
 
       it 'must receive a errors messages' do
@@ -164,7 +173,7 @@ RSpec.describe EstimatesController do
       end
 
       before do
-        post(estimates_quantity_of_can_of_paint_path, params: params, as: :json)
+        post(republic_estimates_quantity_of_can_of_paint_path, params: params, headers: headers_credentials, as: :json)
       end
 
       it 'must receive a error response' do

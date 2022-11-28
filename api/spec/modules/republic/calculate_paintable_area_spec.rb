@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe CalculatePaintableArea, type: :module do
+RSpec.describe Republic::CalculatePaintableArea, type: :module do
   describe '#from' do
     subject { described_class.from(params) }
 
@@ -24,8 +24,8 @@ RSpec.describe CalculatePaintableArea, type: :module do
         }
       end
 
-      it 'must be raise ConfigInvalid exception' do
-        expect { subject }.to raise_error(ConfigInvalid)
+      it 'must be raise Republic::ConfigInvalid exception' do
+        expect { subject }.to raise_error(Republic::ConfigInvalid)
       end
     end
   end

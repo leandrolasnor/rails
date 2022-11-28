@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Paintable do
+RSpec.describe Republic::Paintable do
   subject { described_class.new(attributes) }
 
   let(:attributes) do

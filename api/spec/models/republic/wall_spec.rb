@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Wall do
+RSpec.describe Republic::Wall do
   subject { described_class.new(attributes) }
 
   let(:attributes) do

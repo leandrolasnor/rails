@@ -4,20 +4,13 @@ require:
   - rubocop-rspec
 
 AllCops:
+  Exclude:
+    - 'db/**/*'
+
   TargetRubyVersion: 2.6.6
   TargetRailsVersion: 5.0
 
   NewCops: enable
-
-  Exclude:
-    - db/schema.rb
-    - db/seeds.rb
-    - config/environments/**/*.rb
-    - bin/**/*
-    - vendor/**/*
-    - routes.rb
-    - lib/**/*.rake
-    - lib/utils/conciliation.rb
 
   UseCache: false
 
@@ -61,37 +54,22 @@ Layout/LineLength:
   Enabled: false
 
 Lint/BooleanSymbol:
-  Exclude:
-    - db/**/*
+  Enabled: true
 
 Lint/EmptyBlock:
-  Exclude:
-    - db/migrate/20161109170845_load_modality_types.rb
-    - db/migrate/20161121185630_setup_profiles_and_permissions.rb
-    - db/migrate/20161124184158_load_countries.rb
-    - db/migrate/20161124202206_load_cities.rb
-    - db/migrate/20161124205044_load_sponsor_types.rb
-    - db/migrate/20161205194055_load_event_types.rb
-    - db/migrate/20170210184412_load_country_codes.rb
-    - db/migrate/20170220193814_load_questions.rb
-    - db/migrate/20170220205146_setup_event_questions.rb
-    - spec/factories/*.rb
+  Enabled: true
 
 Lint/MissingSuper:
   Enabled: false
 
 Lint/NestedMethodDefinition:
-  Exclude:
-    - db/migrate/20200713131626_populate_phone_country_from_trainer_users.rb
-    - db/migrate/20210309033307_drop_trainer_future_revenues_table.rb
+  Enabled: true
 
 Lint/RescueException:
-  Exclude:
-    - db/migrate/20210908193220_add_status_column_on_customer_schedule.rb
+  Enabled: true
 
 Lint/SuppressedException:
-  Exclude:
-    - db/migrate/20210908193220_add_status_column_on_customer_schedule.rb
+  Enabled: true
 
 Layout/SpaceInLambdaLiteral:
   EnforcedStyle: require_space
@@ -146,32 +124,23 @@ Style/CaseLikeIf:
 
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact
+  Exclude:
+    - 'config/application.rb'
 
 Style/Documentation:
   Enabled: false
 
 Style/EmptyMethod:
-  Exclude:
-    - db/migrate/20170825140427_set_kits_withdraw_date_end.rb
-    - db/migrate/20170927161530_set_event_modality_hours_and_limits.rb
-    - db/migrate/20180808144939_set_bin_discount_percentage.rb
+  Enabled: true
 
 Style/ExponentialNotation:
   Enabled: false
 
 Style/FormatString:
-  Exclude:
-    - lib/geocoder/geocoder.rb
+  Enabled: true
 
 Style/FormatStringToken:
-  Exclude:
-    - lib/geocoder/geocoder.rb
-
-Style/FrozenStringLiteralComment:
   Enabled: true
-  Exclude:
-    - db/**/*
-    - app/views/**/*
 
 Style/GuardClause:
   Enabled: false
@@ -193,32 +162,12 @@ Style/OptionalBooleanParameter:
 
 Style/MethodCallWithArgsParentheses:
   Enabled: true
-  Exclude:
-    - db/**/*
-    - config/routes.rb
-  IncludedMacros:
-    - post
-    - get
-    - put
-    - patch
-    - delete
   AllowedMethods:
-    - raise
-    - exit
-    - render
-    - head
-    - puts
-    - prepend
-    - include
-    - throw
-    - sleep
-    - validate
-    - to
-    - not_to
-    - eq
-    - describe
-    - shared_examples
-    - of
+    - 'raise'
+    - 'render'
+    - 'use'
+  Exclude:
+    - 'spec/**/*'
 
 Style/RaiseArgs:
   Enabled: false
@@ -240,63 +189,25 @@ Style/WordArray:
 
 # Rails
 Rails/CreateTableWithTimestamps:
-  Exclude:
-    - db/migrate/20161227203850_create_event_extras_subscriptions.rb
-    - db/migrate/20170825195749_create_event_modalities_coupons.rb
-    - db/migrate/20200721115306_create_rates_tags.rb
-    - db/migrate/20200918163845_create_events_ongs.rb
-    - db/migrate/20201007130952_create_activity_occurrences_subscriptions.rb
-    - db/migrate/20210730181718_create_table_competition_matches_competition_teams.rb
-    - db/migrate/20210802121142_create_table_customer_user_competition_team.rb
+  Enabled: true
 
 Rails/Delegate:
   Enabled: false
 
 Rails/DynamicFindBy:
-  AllowedReceivers:
-    - PagarMe::BulkAnticipation
-    - PagarMe::Recipient
-    - PagarMe::Subscription
-    - PagarMe::Transaction
-    - PagarMe::Transfer
+  Enabled: true
 
 Rails/FilePath:
   Enabled: false
 
 Rails/NotNullColumn:
-  Exclude:
-    - db/migrate/20220216213847_changes_for_frachisee_table.rb
+  Enabled: true
 
 Rails/ReversibleMigration:
-  Exclude:
-    - db/migrate/20170419194204_change_athlete_number_from_subscriptions.rb
-    - db/migrate/20200821232142_change_status_type_on_customer_notifications.rb
-    - db/migrate/20201020165422_change_bpm_avg_type.rb
-    - db/migrate/20201106132347_drop_recurrency.rb
-    - db/migrate/20201110225918_change_donation_value_nullable.rb
-    - db/migrate/20210309033307_drop_trainer_future_revenues_table.rb
-    - db/migrate/20210309204805_remove_payment_status_from_trainer_balances.rb
-    - db/migrate/20210527122225_add_default_value_to_standard_regulation.rb
-    - db/migrate/20210622132552_create_stores.rb
-    - db/migrate/20210623191646_create_tokens.rb
-    - db/migrate/20210728192048_add_credit_card_cpf_maximun_length.rb
-    - db/migrate/20210903203748_add_terms_accepted_at_on_trainers_and_customers.rb
-    - db/migrate/20220216213847_changes_for_frachisee_table.rb
-    - db/migrate/20220322181715_alter_days_of_week_to_activity_occurrence.rb
+  Enabled: true
 
 Rails/SkipsModelValidations:
-  Exclude:
-    - db/migrate/20170623043131_set_initial_kit_sold_and_kit_blocked_to_kits.rb
-    - db/migrate/20170623164308_configure_slug_in_events.rb
-    - db/migrate/20170810172340_add_fields_to_event_extras.rb
-    - db/migrate/20170810204745_add_fields_to_event_extras_subscriptions.rb
-    - db/migrate/20170825140427_set_kits_withdraw_date_end.rb
-    - db/migrate/20180808144939_set_bin_discount_percentage.rb
-    - db/migrate/20200713121734_populate_phone_country_from_customer_users.rb
-    - db/migrate/20200713131626_populate_phone_country_from_trainer_users.rb
-    - db/migrate/20200808201206_adds_visible_to_customer_configs.rb
-    - db/migrate/20210816140937_change_shop_cart_ref_column.rb
-    - db/migrate/20210903203748_add_terms_accepted_at_on_trainers_and_customers.rb
+  Enabled: true
 
 Rails/UnknownEnv:
   Environments:
@@ -337,8 +248,7 @@ RSpec/NestedGroups:
   Enabled: false
 
 RSpec/Rails/AvoidSetupHook:
-  Exclude:
-    - test/**/*
+  Enabled: true
 
 RSpec/SubjectStub:
   Enabled: false

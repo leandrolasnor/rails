@@ -6,21 +6,21 @@ module ::Republic
 
     attr_reader :halls
 
-    validates_with TriggerValidator
+    validates_with Republic::TriggerValidator
 
     delegate :area, to: :geometric
 
     def initialize(params)
       @halls = []
       params.fetch(:halls).each do |hall_attributes|
-        @halls << Hall.new(hall_attributes)
+        @halls << Republic::Hall.new(hall_attributes)
       end
     end
 
     private
 
     def geometric
-      @geometric ||= Geometric::Paintable.new(self)
+      @geometric ||= Republic::Geometric::Paintable.new(self)
     end
   end
 end

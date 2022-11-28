@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Latech::AddressAssignment, type: :model do
+RSpec.describe Latech::AddressAssignment do
   context 'on Latech' do
     context 'and ::MakeSureAssignment' do
       context 'and ::AddressAssignment' do

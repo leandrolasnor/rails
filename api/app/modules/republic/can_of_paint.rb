@@ -6,13 +6,13 @@ module ::Republic
     class << self
       def for_paint(area)
         area = 0 if area.negative?
-        liters = area.to_f / CanOfPaint::INK_LITER_YIELD
-        necessary_material = Array.new(CanOfPaint::KINDS.count)
+        liters = area.to_f / Republic::CanOfPaint::INK_LITER_YIELD
+        necessary_material = Array.new(Republic::CanOfPaint::KINDS.count)
         calculate_material(necessary_material, liters)
       end
 
       def calculate_material(necessary_material, liters, index = 0)
-        cop = CanOfPaint::KINDS[index]
+        cop = Republic::CanOfPaint::KINDS[index]
         quantity, liters = liters.divmod(cop)
         necessary_material[index] = { cop: cop, quantity: quantity }
         if necessary_material.last.nil?

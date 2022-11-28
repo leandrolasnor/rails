@@ -3,10 +3,10 @@
 module ::Republic
   class CalculateQuantityOfCanOfPaintService < ApplicationService
     def call
-      area = CalculatePaintableArea.from(params)
+      area = Republic::CalculatePaintableArea.from(params)
       handle_response[:content][:payload] = cached_can_of_paint(area)
       handle_response
-    rescue KeyError, ConfigInvalid => error
+    rescue KeyError, Republic::ConfigInvalid => error
       error_response[:content][:message] = error.message
       error_response[:status] = :bad_request
       error_response
@@ -16,7 +16,7 @@ module ::Republic
 
     def cached_can_of_paint(area)
       Rails.cache.fetch("#{__method__}/#{area}", expire_in: 1.hour, skip_nil: true) do
-        CanOfPaint.for_paint(area)
+        Republic::CanOfPaint.for_paint(area)
       end
     end
   end

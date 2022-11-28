@@ -33,6 +33,6 @@ end
     a.city = Faker::Address.city
     a.state = Faker::Address.state_abbr
     a.zip = Faker::Number.number(digits: 8)
-    a.address_assignments << Latech::AddressAssignment.new { |o| o.user_id = [user1.id,user2.id].sample }
+    a.address_assignments << Latech::AddressAssignment.new { |o| o.user_id = [user1.id, user2.id].sample }
   end
 end

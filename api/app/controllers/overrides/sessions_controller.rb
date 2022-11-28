@@ -5,7 +5,7 @@ module ::Overrides
     protected
 
     def render_create_success
-      render json: @resource, serializer: UserLoginSerializer, ws_token: ws_token, status: :ok
+      render(json: @resource, serializer: UserLoginSerializer, ws_token: ws_token, status: :ok)
     end
 
     def ws_token

@@ -11,10 +11,8 @@ RSpec.describe Latech::Cepla::Http, type: :context do
     end
   end
 
-
   context 'on prepend' do
     context 'on success' do
-
       before do
         Latech::Cepla::Http::Services::GetAddress.prepend(described_class)
       end

@@ -18,9 +18,9 @@ module ::Republic
     validates :width, numericality: { greater_than: 0 }, format: { with: /\A(?:[1-9]+[0-9]*|0)(?:\.[0-9]{1,2})?\z/, message: I18n.t(:bad_formatted) }
     validates :windows_count, numericality: { greater_than_or_equal_to: 0, only_integer: true }
     validates :doors_count, numericality: { greater_than_or_equal_to: 0, only_integer: true }
-    validates_with AreaLimitValidator
-    validates_with HeightWallAndDoorsValidator, if: -> { doors_count.to_i.positive? }
-    validates_with WindowsAndDoorsAreaRatioValidator, if: -> { windows_area.positive? && doors_area.positive? && area.positive? }
+    validates_with Republic::AreaLimitValidator
+    validates_with Republic::HeightWallAndDoorsValidator, if: -> { doors_count.to_i.positive? }
+    validates_with Republic::WindowsAndDoorsAreaRatioValidator, if: -> { windows_area.positive? && doors_area.positive? && area.positive? }
 
     def initialize(attributes)
       @height = attributes.fetch(:height)
@@ -32,7 +32,7 @@ module ::Republic
     private
 
     def geometric
-      @geometric ||= Geometric::Wall.new(self)
+      @geometric ||= Republic::Geometric::Wall.new(self)
     end
   end
 end

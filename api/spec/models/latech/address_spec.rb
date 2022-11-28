@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Latech::Address, type: :model do
+RSpec.describe Latech::Address do
   subject(:address) { create(:address) }
 
   context 'validations' do

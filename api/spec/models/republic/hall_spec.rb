@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Hall do
+RSpec.describe Republic::Hall do
   subject { described_class.new(attributes) }
 
   let(:attributes) do

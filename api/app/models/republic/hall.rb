@@ -7,19 +7,19 @@ module ::Republic
 
     delegate :paintable_area, to: :geometric
 
-    validates_with WallsQuantityLimitValidator
+    validates_with Republic::WallsQuantityLimitValidator
 
     def initialize(attributes)
       @walls = []
       attributes.fetch(:walls).each do |attr|
-        @walls << Wall.new(attr)
+        @walls << Republic::Wall.new(attr)
       end
     end
 
     private
 
     def geometric
-      @geometric ||= Geometric::Hall.new(self)
+      @geometric ||= Republic::Geometric::Hall.new(self)
     end
   end
 end

@@ -21,8 +21,10 @@ Rails.application.routes.draw do
     end
   end
 
-  namespace :estimates do
-    post 'quantity_of_can_of_paint', action: :quantity_of_can_of_paint, as: :quantity_of_can_of_paint
+  namespace :republic do
+    namespace :estimates do
+      post 'quantity_of_can_of_paint', action: :quantity_of_can_of_paint, as: :quantity_of_can_of_paint
+    end
   end
 
   mount Sidekiq::Web => '/sidekiq'

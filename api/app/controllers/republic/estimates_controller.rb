@@ -3,7 +3,7 @@
 module ::Republic
   class EstimatesController < ApiController
     def quantity_of_can_of_paint
-      deliver(CalculateQuantityOfCanOfPaintService.call(quantity_of_can_of_paint_params))
+      deliver(Republic::CalculateQuantityOfCanOfPaintService.call(quantity_of_can_of_paint_params))
     end
 
     private

@@ -5,7 +5,7 @@ module ::Republic
     class << self
       def from(params)
         paintable = Paintable.new(params)
-        raise ConfigInvalid.new(paintable.errors.full_messages.flatten) if paintable.invalid?
+        raise Republic::ConfigInvalid.new(paintable.errors.full_messages.flatten) if paintable.invalid?
 
         paintable.area
       end

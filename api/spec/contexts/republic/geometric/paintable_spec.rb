@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe ::Geometric::Paintable do
-  subject { described_class.new(Paintable.new(attributes)) }
+RSpec.describe Republic::Geometric::Paintable do
+  subject { described_class.new(Republic::Paintable.new(attributes)) }
 
   describe '.area' do
     context 'when there are doors and windows on wall' do
