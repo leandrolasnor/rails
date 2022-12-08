@@ -2,6 +2,7 @@ version: '3.7'
 services:
     api:
         build: ./api
+        image:  rails/api
         container_name: rails
         command: sh -c "rm -f tmp/pids/server.pid && bundle && bundle exec rails s -p 3000 -b '0.0.0.0'"
         stdin_open: true
@@ -15,18 +16,46 @@ services:
             - sidekiq
             - cable
             - meilisearch
+    db:
+        image: bitnami/postgresql:latest
+        container_name: primary
+        ports:
+            - 5432
+        environment:
+            POSTGRESQL_REPLICATION_MODE: master
+            POSTGRESQL_REPLICATION_USER: readonly
+            POSTGRESQL_REPLICATION_PASSWORD: reader
+            POSTGRESQL_USERNAME: root
+            POSTGRESQL_PASSWORD: root
+            POSTGRESQL_DATABASE: api_development
+            PGPASSWORD: root
+    replica:
+        image: bitnami/postgresql:latest
+        container_name: replica
+        ports:
+            - 5432
+        depends_on:
+            - db
+        environment:
+            POSTGRESQL_REPLICATION_MODE: slave
+            POSTGRESQL_REPLICATION_USER: readonly
+            POSTGRESQL_REPLICATION_PASSWORD: reader
+            POSTGRESQL_PASSWORD: root
+            POSTGRESQL_MASTER_HOST: db
+            POSTGRESQL_MASTER_PORT_NUMBER: 5432
     meilisearch:
-        image: getmeili/meilisearch:v0.28
+        image: getmeili/meilisearch:latest
         container_name: meilisearch
         ports:
             - "7700:7700"
         volumes:
             - ./api/db/meilisearch/data.ms:/meili_data/data.ms
         environment:
-            - MEILI_MASTER_KEY=4f6bdbe90bcd297b6d
-            - MEILI_NO_ANALYTICS=true
+            MEILI_MASTER_KEY: 4f6bdbe90bcd297b6d
+            MEILI_NO_ANALYTICS: true
     sidekiq:
-        build: ./api
+        # build: ./api
+        image:  rails/api
         container_name: sidekiq
         command: sh -c "bundle && bundle exec sidekiq"
         volumes:
@@ -34,9 +63,10 @@ services:
         depends_on:
             - redis
     cable:
-        build: ./api
+        # build: ./api
+        image:  rails/api
         container_name: cable
-        command: sh -c "rm -f tmp/pids/server.pid && puma -p 28080 cable/config.ru"
+        command: sh -c "rm -f tmp/pids/server.pid && bundle && puma -p 28080 cable/config.ru"
         volumes:
             - ./api:/app
         ports:

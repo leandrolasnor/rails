@@ -40,5 +40,6 @@ module RailsApi
     config.i18n.available_locales = [:pt, :en]
     config.i18n.default_locale = :en
     config.i18n.enforce_available_locales = false
+    config.active_record.legacy_connection_handling = false
   end
 end

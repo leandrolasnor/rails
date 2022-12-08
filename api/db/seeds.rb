@@ -8,10 +8,6 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-User.destroy_all
-Moat::Album.destroy_all
-Latech::Search::Address.destroy_all
-Latech::Search::Address.clear_index!
 Rails.cache.clear
 
 user1 = User.create!(name: 'Teste', email: 'teste@teste.com', password: '123456', password_confirmation: '123456', role: 0)
@@ -26,6 +22,7 @@ user2 = User.create!(name: 'Other Teste', email: 'otherteste@teste.com', passwor
   )
 end
 
+Latech::Search::Address.clear_index!
 20.times do
   Latech::Search::Address.create! do |a|
     a.address = Faker::Address.street_address
@@ -36,3 +33,5 @@ end
     a.address_assignments << Latech::AddressAssignment.new { |o| o.user_id = [user1.id, user2.id].sample }
   end
 end
+
+ActiveRecord::Base.connection.execute('GRANT SELECT ON ALL TABLES IN SCHEMA public TO readonly')
