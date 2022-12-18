@@ -21,8 +21,4 @@ class ApplicationService
   attr_accessor :handle_response
   attr_accessor :error_response
   attr_reader :params
-
-  def sanitize
-    ApplicationRecord.sanitize_sql_for_conditions(yield)
-  end
 end
