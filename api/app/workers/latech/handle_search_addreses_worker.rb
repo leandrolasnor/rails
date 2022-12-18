@@ -8,7 +8,7 @@ module ::Latech
     def perform(params)
       params = params.deep_symbolize_keys!
       Latech::Addreses.search(params) do |addreses, errors|
-        ActionCable.server.broadcast(params[:channel], { type: 'ADDRESES_FETCHED', payload: addreses }) if addreses.present?
+        ActionCable.server.broadcast(params[:channel], { type: 'ADDRESES_FETCHED', payload: { addreses: addreses } }) if addreses.present?
         ActionCable.server.broadcast(params[:channel], { type: 'ERRORS_FROM_ADDRESES_FETCHED', payload: { errors: errors } }) if errors.present?
       end
     rescue StandardError => error
