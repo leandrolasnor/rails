@@ -14,8 +14,9 @@ user1 = User.create!(name: 'Teste', email: 'teste@teste.com', password: '123456'
 
 user2 = User.create!(name: 'Other Teste', email: 'otherteste@teste.com', password: '123456', password_confirmation: '123456', role: 1)
 
+Moat::Search::Album.clear_index!
 30.times do
-  Moat::Album.create!(
+  Moat::Search::Album.create!(
     name: Faker::Music.album,
     year: rand(1948..Time.zone.now.year).to_i,
     artist_id: rand(1..5)
