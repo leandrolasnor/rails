@@ -18,9 +18,9 @@ module ::Latech
 
     def cached_address
       handle_response[:content][:payload] = Rails.cache.fetch("#{__method__}/#{params.fetch(:zip)}", expire_in: 12.hours, skip_nil: true) do
-        Latech::Search::Address.search(
-          params: { filter: ["zip = '#{params.fetch(:zip)}'"] }
-        )[:hits].first
+        ApplicationRecord.reader do
+          Latech::Search::Address.find_by(zip: params.fetch(:zip))
+        end
       end
     end
   end
