@@ -24,7 +24,8 @@ module ::Latech
           params: {
             filter: ["user = '#{params.fetch(:user_id)}'"],
             limit: params.dig(:pagination, :limit),
-            offset: params.dig(:pagination, :offset)
+            offset: params.dig(:pagination, :offset),
+            sort: ['address:asc']
           }
         ))
       rescue StandardError => error
