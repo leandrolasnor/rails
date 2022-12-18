@@ -30,7 +30,7 @@ module ::Moat
     private
 
     def album_params
-      params.fetch(:album, {}).merge(pagination_params).merge(channel_params)
+      params.fetch(:album, {}).merge(channel_params)
     end
 
     def album_show_params
@@ -50,8 +50,20 @@ module ::Moat
     end
 
     def album_search_params
-      album_params[:pagination][:serializer] = AlbumsSerializer
-      album_params.merge(query: params[:query]).permit(:query, :channel, { pagination: [:current_page, :per_page, :serializer] })
+      album_params.merge(
+        search_pagination_params
+      ).merge(
+        query: params.fetch(:query, '')
+      ).permit(
+        :query,
+        :channel,
+        {
+          pagination: [
+            :limit,
+            :offset
+          ]
+        }
+      )
     end
   end
 end

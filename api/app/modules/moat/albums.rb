@@ -3,11 +3,12 @@
 module ::Moat
   module Albums
     class << self
-      include Pagination
       attr_reader :params
 
       def show(params)
-        album = Moat::AlbumSerializer.new(Moat::Album.find(params[:id])).serializable_hash # ActiveRecord::RecordNotFound
+        album = ApplicationRecord.reader do
+          Moat::AlbumSerializer.new(Moat::Search::Album.find(params.fetch(:id))).serializable_hash # ActiveRecord::RecordNotFound
+        end
         yield(album, nil)
       rescue ActiveRecord::RecordNotFound => error
         yield(nil, [error.message])
@@ -21,7 +22,9 @@ module ::Moat
       end
 
       def update(params)
-        album = Moat::Album.find(params[:id]) # ActiveRecord::RecordNotFound
+        album = ApplicationRecord.reader do
+          Moat::Search::Album.find(params[:id]) # ActiveRecord::RecordNotFound
+        end
         album.update!(params.slice(:name, :year, :artist_id))
         yield(album, nil)
       rescue ActiveRecord::RecordInvalid => error
@@ -31,9 +34,15 @@ module ::Moat
       end
 
       def search(params)
-        @params = params
-        albums = Moat::Album.where(params[:query]).then(&paginate)
-        yield({ albums: albums, pagination: pagination }, nil)
+        albums = Moat::Search::Album.search(
+          query: params.fetch(:query, ''),
+          params: {
+            limit: params.dig(:pagination, :limit),
+            offset: params.dig(:pagination, :offset),
+            sort: ['name:asc']
+          }
+        )
+        yield({ albums: albums }, nil)
       rescue StandardError => error
         yield(nil, [error.message])
       end
@@ -51,7 +60,9 @@ module ::Moat
     module Sweeper
       class << self
         def make(params)
-          album = Moat::Album.find(params[:id]) # ActiveRecord::RecordNotFound
+          album = ApplicationRecord.reader do
+            Moat::Search::Album.find(params[:id]) # ActiveRecord::RecordNotFound
+          end
           album.destroy! # ActiveRecord::RecordNotDestroyed
         end
       end
@@ -60,7 +71,7 @@ module ::Moat
     module Factory
       class << self
         def make(params)
-          album = Moat::Album.new do |s|
+          album = Moat::Search::Album.new do |s|
             s.name      = params[:name]
             s.year      = params[:year]
             s.artist_id = params[:artist_id]

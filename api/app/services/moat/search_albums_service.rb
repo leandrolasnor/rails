@@ -3,9 +3,6 @@
 module ::Moat
   class SearchAlbumsService < ApplicationService
     def call
-      params[:query] = sanitize do
-        ['LOWER(name) like ?', "%#{params[:query]}%"]
-      end
       Moat::HandleSearchAlbumsWorker.perform_async(params)
       handle_response
     rescue StandardError => error

@@ -7,7 +7,20 @@ module ::Meilisearch
 
     class << self
       def address
-        yield(MeiliSearch::Client.new(URL, ACCESS_KEY).index(Rails.env.test? ? __method__.to_s.insert(0, '_') : __method__))
+        yield(get(__method__))
+      end
+
+      def album
+        yield(get(__method__))
+      end
+
+      def get(entity)
+        MeiliSearch::Client.new(
+          URL,
+          ACCESS_KEY
+        ).index(
+          Rails.env.test? ? entity.to_s.insert(0, '_') : entity
+        )
       end
     end
   end
