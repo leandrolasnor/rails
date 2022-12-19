@@ -42,7 +42,7 @@ module ::Moat
             sort: ['name:asc']
           }
         )
-        yield({ albums: albums }, nil)
+        yield(albums, nil)
       rescue StandardError => error
         yield(nil, [error.message])
       end

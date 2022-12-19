@@ -7,8 +7,8 @@ module ::Moat
 
     def perform(params)
       params = params.deep_symbolize_keys!
-      Moat::Albums.search(params) do |data, errors|
-        ActionCable.server.broadcast(params[:channel], { type: 'ALBUMS_FETCHED', payload: data }) if data.present?
+      Moat::Albums.search(params) do |albums, errors|
+        ActionCable.server.broadcast(params[:channel], { type: 'ALBUMS_FETCHED', payload: { albums: albums } }) if albums.present?
         ActionCable.server.broadcast(params[:channel], { type: 'ERRORS_FROM_SEARCH_ALBUMS', payload: { errors: errors } }) if errors.present?
       end
     rescue StandardError => error
