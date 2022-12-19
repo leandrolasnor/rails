@@ -10,18 +10,9 @@ module ::Latech
       end
 
       def assigned?
-        @assigned ||= Latech::Search::Address.search(params: params)[:hits].present?
-      end
-
-      private
-
-      def params
-        {
-          filter: [
-            "id = '#{assignment.address_id}'",
-            "user = '#{assignment.user_id}'"
-          ]
-        }
+        @assigned ||= ApplicationRecord.reader do
+          Latech::AddressAssignment.exists?(address_id: assignment.address_id, user_id: assignment.user_id)
+        end
       end
     end
   end
