@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Moat::Album do
+RSpec.describe Moat::Search::Album do
   subject(:album) { create(:album, artist_id: 5) }
 
   it 'must have validate_presence_of' do

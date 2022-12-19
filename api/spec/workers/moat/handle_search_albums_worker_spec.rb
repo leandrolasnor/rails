@@ -9,7 +9,7 @@ RSpec.describe Moat::HandleSearchAlbumsWorker, type: :worker do
   let(:event_error) { { type: '500', payload: { message: I18n.t(:message_internal_server_error) } } }
 
   context 'when there is a success case' do
-    let(:event_success) { { type: 'ALBUMS_FETCHED', payload: ['albums'] } }
+    let(:event_success) { { type: 'ALBUMS_FETCHED', payload: { albums: ['albums'] } } }
 
     before do
       allow(Moat::Albums).to receive(:search).with(params).and_yield(['albums'], nil)

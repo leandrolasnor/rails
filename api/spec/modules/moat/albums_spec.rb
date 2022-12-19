@@ -9,7 +9,7 @@ RSpec.describe Moat::Albums, type: :module do
     let(:params_invalid) { { id: 999 } }
 
     before do
-      allow_any_instance_of(Moat::Album).to receive(:artist).and_return({})
+      allow_any_instance_of(Moat::Search::Album).to receive(:artist).and_return({})
     end
 
     it 'a album with success' do
@@ -23,7 +23,7 @@ RSpec.describe Moat::Albums, type: :module do
       let(:record_not_found_error) { ActiveRecord::RecordNotFound.new }
 
       before do
-        allow(Moat::Album).to receive(:find).with(999).and_raise(record_not_found_error)
+        allow(Moat::Search::Album).to receive(:find).with(999).and_raise(record_not_found_error)
       end
 
       it 'album not found' do
@@ -38,7 +38,7 @@ RSpec.describe Moat::Albums, type: :module do
       let(:error) { StandardError.new }
 
       before do
-        allow(Moat::Album).to receive(:find).with(999).and_raise(error)
+        allow(Moat::Search::Album).to receive(:find).with(999).and_raise(error)
       end
 
       it 'rescue a StandardError' do
@@ -53,7 +53,7 @@ RSpec.describe Moat::Albums, type: :module do
 
     it 'a new album with success' do
       described_class.create(params) do |album, error|
-        expect(album).to be_a(Moat::Album)
+        expect(album).to be_a(Moat::Search::Album)
         expect(error).to be_nil
       end
     end
@@ -86,12 +86,12 @@ RSpec.describe Moat::Albums, type: :module do
     let(:params_invalid) { params.merge!(year: 1500) }
 
     before do
-      allow_any_instance_of(Moat::Album).to receive(:artist).and_return({})
+      allow_any_instance_of(Moat::Search::Album).to receive(:artist).and_return({})
     end
 
     it 'a album with success' do
       described_class.update(params) do |album, error|
-        expect(album).to be_a(Moat::Album)
+        expect(album).to be_a(Moat::Search::Album)
         expect(album[:name]).to eq('Teste')
         expect(error).to be_nil
       end
@@ -111,7 +111,7 @@ RSpec.describe Moat::Albums, type: :module do
         described_class.update(params_invalid_id) do |instance, error|
           expect(instance).to be_nil
           expect(error).to be_a(Array)
-          expect(error.first).to eq("Couldn't find Moat::Album with 'id'=999")
+          expect(error.first).to eq("Couldn't find Moat::Search::Album with 'id'=999")
         end
       end
     end
@@ -120,7 +120,7 @@ RSpec.describe Moat::Albums, type: :module do
       let(:error) { StandardError.new }
 
       before do
-        allow_any_instance_of(Moat::Album).to receive(:update!).with(params.slice(:name, :year, :artist_id)).and_raise(error)
+        allow_any_instance_of(Moat::Search::Album).to receive(:update!).with(params.slice(:name, :year, :artist_id)).and_raise(error)
       end
 
       it 'rescue a StandardError' do
@@ -130,45 +130,43 @@ RSpec.describe Moat::Albums, type: :module do
   end
 
   context 'on search' do
-    let(:pagination) { { pages_count: 1, per_page: 10, current_page: 1, items_count: 1 } }
-    let(:album) { create(:album) }
-    let(:params) { { query: "LOWER(name) like '%#{album[:name].split.pop.downcase!}%'" } }
-
-    it 'gets albums' do
-      described_class.search(params) do |payload, error|
-        expect(payload[:albums]).to be_a(ActiveRecord::Relation)
-        expect(payload[:albums].first).to eq(album)
-        expect(payload[:albums].count).to eq(1)
-        expect(payload[:pagination]).to eq(pagination)
-        expect(error).to be_nil
-      end
+    let(:params) do
+      {
+        query: 'query',
+        pagination: {
+          limit: 10,
+          offset: 0
+        }
+      }
+    end
+    let(:params_search) do
+      {
+        query: params.fetch(:query, ''),
+        params: {
+          limit: 10,
+          offset: 0,
+          sort: ['name:asc']
+        }
+      }
     end
 
-    context 'when return empty array' do
-      let(:params_invalid) { { query: "LOWER(name) like '%XXX%'" } }
-
-      it 'params are unenough' do
-        described_class.search(params_invalid) do |payload, error|
-          expect(payload[:albums]).to be_a(ActiveRecord::Relation)
-          expect(payload[:albums]).to eq([])
-          expect(error).to be_nil
-        end
-      end
-    end
-
-    context 'when a StandardError is raised' do
-      let(:error) { StandardError.new('Some Error') }
-
+    context 'on success' do
       before do
-        allow(Moat::Album).to receive(:where).and_raise(error)
+        allow(Moat::Search::Album).to receive(:search).with(params_search).and_return(true)
       end
 
-      it 'is possible to deal' do
-        described_class.search(params) do |payload, errors|
-          expect(errors).to be_a(Array)
-          expect(payload).to be_nil
-          expect(errors.first).to be('Some Error')
+      specify { expect { |b| described_class.search(params, &b) }.to yield_with_args(true, nil) }
+    end
+
+    context 'on exception' do
+      context 'with StandardError' do
+        let(:error) { StandardError.new('Some Error') }
+
+        before do
+          allow(Moat::Search::Album).to receive(:search).with(params_search).and_raise(error)
         end
+
+        specify { expect { |b| described_class.search(params, &b) }.to yield_with_args(nil, ['Some Error']) }
       end
     end
   end
@@ -184,7 +182,7 @@ RSpec.describe Moat::Albums, type: :module do
     it 'a album with success' do
       described_class.delete(params) do |instance, error|
         expect(instance).to eq(album)
-        expect { Moat::Album.find(album[:id]) }.to raise_error(ActiveRecord::RecordNotFound)
+        expect { Moat::Search::Album.find(album[:id]) }.to raise_error(ActiveRecord::RecordNotFound)
         expect(error).to be_nil
       end
     end

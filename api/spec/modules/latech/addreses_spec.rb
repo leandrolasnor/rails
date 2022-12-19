@@ -3,46 +3,27 @@
 require 'rails_helper'
 
 RSpec.describe Latech::Addreses, type: :module do
-  context 'on make_sure_assignment' do
-    let(:params_search) do
-      {
-        params: {
-          filter: [
-            "id = '#{params[:address_id]}'",
-            "user = '#{params[:user_id]}'"
-          ]
-        }
-      }
-    end
-
+  describe '#make_sure_assignment' do
     context 'with a new assignment' do
       let(:address) { create(:address) }
       let(:user) { create(:user) }
       let(:params) { { address_id: address.id, user_id: user.id } }
-      let(:assignment_created) { Latech::AddressAssignment.last }
-
-      before do
-        allow(Latech::Search::Address).to receive(:search).with(params_search).and_return({ hits: [] })
-      end
+      let(:expected_assignment) { user.address_assignments.first }
 
       it do
-        described_class.make_sure_assignment(params) do |assignment, _|
-          expect(assignment == assignment_created).to be_truthy
+        described_class.make_sure_assignment(params) do |assignment, errors|
+          expect(assignment).to eq(expected_assignment)
+          expect(errors).to be_nil
         end
       end
     end
 
     context 'without a new assignment' do
-      let(:params) { { address_id: nil, user_id: nil } }
-
-      before do
-        allow(Latech::Search::Address).to receive(:search).with(params_search).and_return({ hits: [true] })
-        allow(Latech::AddressAssignment).to receive(:create!)
-      end
+      let(:address) { create(:address) }
+      let(:params) { { address_id: address.id, user_id: address.users.first.id } }
 
       it do
         described_class.make_sure_assignment(params) do |assignment, errors|
-          expect(Latech::AddressAssignment).to have_received(:create!)
           expect(assignment).to be_nil
           expect(errors).to be_nil
         end
@@ -50,14 +31,9 @@ RSpec.describe Latech::Addreses, type: :module do
     end
 
     context 'on exception' do
-      let(:params) { { address_id: nil, user_id: nil } }
-
       context 'on ActiveRecord::RecordInvalid' do
+        let(:params) { { address_id: nil, user_id: nil } }
         let(:error) { ['Address must exist', 'User must exist'] }
-
-        before do
-          allow(Latech::Search::Address).to receive(:search).with(params_search).and_return({ hits: [] })
-        end
 
         it do
           described_class.make_sure_assignment(params) do |_, errors|
@@ -67,26 +43,34 @@ RSpec.describe Latech::Addreses, type: :module do
       end
 
       context 'on StandardError' do
-        let(:error) { StandardError.new('Some Error') }
+        let(:params) { {} }
 
-        before do
-          allow(Latech::Search::Address).to receive(:search).with(params_search).and_raise(error)
+        specify do
+          expect { |b| described_class.make_sure_assignment(params, &b) }.to yield_with_args(nil, 'key not found: :user_id')
         end
-
-        specify { expect { |b| described_class.make_sure_assignment(params, &b) }.to yield_with_args(nil, 'Some Error') }
       end
     end
   end
 
   context 'on search' do
-    let(:params) { { query: 'query', user_id: 1 } }
+    let(:params) do
+      {
+        query: 'query',
+        user_id: 1,
+        pagination: {
+          limit: 10,
+          offset: 0
+        }
+      }
+    end
     let(:params_search) do
       {
-        query: params[:query],
+        query: params.fetch(:query, ''),
         params: {
-          filter: ["user = '#{params[:user_id]}'"],
-          limit: params.dig(:pagination, :limit),
-          offset: params.dig(:pagination, :offset)
+          filter: ["user = '#{params.fetch(:user_id)}'"],
+          limit: 10,
+          offset: 0,
+          sort: ['address:asc']
         }
       }
     end
@@ -100,13 +84,29 @@ RSpec.describe Latech::Addreses, type: :module do
     end
 
     context 'on exception' do
-      let(:error) { StandardError.new('Some Error') }
+      context 'with StandardError' do
+        let(:error) { StandardError.new('Some Error') }
 
-      before do
-        allow(Latech::Search::Address).to receive(:search).with(params_search).and_raise(error)
+        before do
+          allow(Latech::Search::Address).to receive(:search).with(params_search).and_raise(error)
+        end
+
+        specify { expect { |b| described_class.search(params, &b) }.to yield_with_args(nil, ['Some Error']) }
       end
 
-      specify { expect { |b| described_class.search(params, &b) }.to yield_with_args(nil, ['Some Error']) }
+      context 'with KeyError' do
+        let(:params) do
+          {
+            query: 'query',
+            pagination: {
+              limit: 10,
+              offset: 0
+            }
+          }
+        end
+
+        specify { expect { |b| described_class.search(params, &b) }.to yield_with_args(nil, ['key not found: :user_id']) }
+      end
     end
   end
 
@@ -115,7 +115,7 @@ RSpec.describe Latech::Addreses, type: :module do
     let(:params) { { zip: '23058500', user_id: user.id } }
 
     context 'on success' do
-      let(:address_created) { Latech::Search::Address.last }
+      let(:address_created) { user.addreses.first }
       let(:result_cepla) { build(:result_cepla) }
 
       before do
@@ -124,7 +124,7 @@ RSpec.describe Latech::Addreses, type: :module do
 
       it do
         described_class.capture(params) do |address_captured|
-          expect(address_captured == address_created).to be_truthy
+          expect(address_captured).to eq(address_created)
         end
       end
     end

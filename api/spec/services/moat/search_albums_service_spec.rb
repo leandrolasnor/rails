@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Moat::SearchAlbumsService, type: :service do
   context 'when calling the service' do
     let(:params) { { query: 'some albums name' } }
-    let(:params_worker) { { query: "LOWER(name) like '%some albums name%'" } }
+    let(:params_worker) { { query: 'some albums name' } }
     let(:service) { described_class.call(params) }
 
     before do

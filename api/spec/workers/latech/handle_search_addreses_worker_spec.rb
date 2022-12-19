@@ -7,7 +7,14 @@ RSpec.describe Latech::HandleSearchAddresesWorker, type: :worker do
   let(:params) { { channel: 'channel' } }
 
   context 'on success' do
-    let(:event_success) { { type: 'ADDRESES_FETCHED', payload: ['addreses'] } }
+    let(:event_success) do
+      {
+        type: 'ADDRESES_FETCHED',
+        payload: {
+          addreses: ['addreses']
+        }
+      }
+    end
 
     before do
       allow(Latech::Addreses).to receive(:search).with(params).and_yield(['addreses'], nil)

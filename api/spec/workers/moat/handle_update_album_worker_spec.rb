@@ -12,7 +12,7 @@ RSpec.describe Moat::HandleUpdateAlbumWorker, type: :worker do
     let(:event_success) { { type: 'ALBUM_UPDATED', payload: { album: 'album updated' } } }
 
     before do
-      allow_any_instance_of(Moat::Album).to receive(:artist).and_return({})
+      allow_any_instance_of(Moat::Search::Album).to receive(:artist).and_return({})
       allow(Moat::Albums).to receive(:update).with(params).and_yield('album updated', nil)
       allow(ActionCable.server).to receive(:broadcast).with(params[:channel], event_success)
       worker
@@ -28,7 +28,7 @@ RSpec.describe Moat::HandleUpdateAlbumWorker, type: :worker do
     let(:event_failure) { { type: 'ERRORS_FROM_ALBUM_UPDATED', payload: { errors: ['error'] } } }
 
     before do
-      allow_any_instance_of(Moat::Album).to receive(:artist).and_return({})
+      allow_any_instance_of(Moat::Search::Album).to receive(:artist).and_return({})
       allow(Moat::Albums).to receive(:update).with(params).and_yield(nil, ['error'])
       allow(ActionCable.server).to receive(:broadcast).with(params[:channel], event_failure)
       worker

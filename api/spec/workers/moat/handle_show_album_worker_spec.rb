@@ -24,11 +24,11 @@ RSpec.describe Moat::HandleShowAlbumWorker, type: :worker do
   end
 
   context 'when there is a failure case' do
-    let(:event_failure) { { type: 'ERRORS_FROM_ALBUM_FETCHED', payload: { errors: ["Couldn't find Moat::Album with 'id'=9999"] } } }
+    let(:event_failure) { { type: 'ERRORS_FROM_ALBUM_FETCHED', payload: { errors: ["Couldn't find Moat::Search::Album with 'id'=9999"] } } }
 
     before do
-      allow_any_instance_of(Moat::Album).to receive(:artist).and_return({})
-      allow(Moat::Albums).to receive(:show).with(params).and_yield(nil, ["Couldn't find Moat::Album with 'id'=9999"])
+      allow_any_instance_of(Moat::Search::Album).to receive(:artist).and_return({})
+      allow(Moat::Albums).to receive(:show).with(params).and_yield(nil, ["Couldn't find Moat::Search::Album with 'id'=9999"])
       allow(ActionCable.server).to receive(:broadcast).with(params[:channel], event_failure)
       worker
     end
