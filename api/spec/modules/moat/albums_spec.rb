@@ -3,133 +3,110 @@
 require 'rails_helper'
 
 RSpec.describe Moat::Albums, type: :module do
-  context 'on show' do
-    let(:album) { Moat::AlbumSerializer.new(create(:album)).serializable_hash }
-    let(:params) { { id: album[:id] } }
-    let(:params_invalid) { { id: 999 } }
-
-    before do
-      allow_any_instance_of(Moat::Search::Album).to receive(:artist).and_return({})
-    end
-
-    it 'a album with success' do
-      described_class.show(params) do |instance, error|
-        expect(instance).to eq(album)
-        expect(error).to be_nil
-      end
-    end
-
-    context 'when raise a ActiveRecord::RecordNotFound' do
-      let(:record_not_found_error) { ActiveRecord::RecordNotFound.new }
-
-      before do
-        allow(Moat::Search::Album).to receive(:find).with(999).and_raise(record_not_found_error)
-      end
-
-      it 'album not found' do
-        described_class.show(params_invalid) do |instance, error|
-          expect(instance).to be_nil
-          expect(error).to be_a(Array)
-        end
-      end
-    end
-
-    context 'when raise a StandardError' do
-      let(:error) { StandardError.new }
-
-      before do
-        allow(Moat::Search::Album).to receive(:find).with(999).and_raise(error)
-      end
-
-      it 'rescue a StandardError' do
-        expect { described_class.show(params_invalid) }.to raise_error(StandardError)
-      end
-    end
-  end
-
-  context 'on create' do
-    let(:params) { { name: 'Teste', year: 2022, artist_id: 1 } }
-    let(:params_invalid) { { name: '', year: 0, artist_id: 0 } }
-
-    it 'a new album with success' do
-      described_class.create(params) do |album, error|
-        expect(album).to be_a(Moat::Search::Album)
-        expect(error).to be_nil
-      end
-    end
-
-    context 'when create raise error' do
-      it 'fields are invalid' do
-        described_class.create(params_invalid) do |instance, error|
-          expect(instance).to be_nil
-          expect(error).to be_a(Array)
-        end
-      end
-    end
-
-    context 'when create raise a StandardError' do
-      let(:error) { StandardError.new }
-
-      before do
-        allow(Moat::Albums::Factory).to receive(:make).with(params_invalid).and_raise(error)
-      end
-
-      it 'rescue a StandardError' do
-        expect { described_class.create(params_invalid) }.to raise_error(StandardError)
-      end
-    end
-  end
-
-  context 'on update' do
+  describe '.show' do
     let(:album) { create(:album) }
-    let(:params) { Moat::AlbumSerializer.new(album).serializable_hash.merge!(name: 'Teste', artist_id: 1) }
-    let(:params_invalid) { params.merge!(year: 1500) }
 
-    before do
-      allow_any_instance_of(Moat::Search::Album).to receive(:artist).and_return({})
-    end
+    context 'when params are correct' do
+      let(:params) { { id: album[:id] } }
+      let(:serializable) { Moat::AlbumSerializer.new(album).serializable_hash }
 
-    it 'a album with success' do
-      described_class.update(params) do |album, error|
-        expect(album).to be_a(Moat::Search::Album)
-        expect(album[:name]).to eq('Teste')
-        expect(error).to be_nil
-      end
-    end
-
-    context 'when update raise error' do
-      let(:params_invalid_id) { params.merge!(id: 999) }
-
-      it 'fields are invalids' do
-        described_class.update(params_invalid) do |album, error|
-          expect(album).to be_nil
-          expect(error).to be_a(Array)
+      it 'must to get serialized album object' do
+        described_class.show(params) do |instance, error|
+          expect(instance).to eq(serializable)
+          expect(error).to be_nil
         end
       end
+    end
 
-      it 'album not found' do
-        described_class.update(params_invalid_id) do |instance, error|
+    context 'when params are not correct' do
+      let(:params) { { id: 999 } }
+      let(:expected_error) { ["Couldn't find Moat::Album with 'id'=999"] }
+
+      it 'must to get a array of errors' do
+        described_class.show(params) do |instance, error|
           expect(instance).to be_nil
-          expect(error).to be_a(Array)
-          expect(error.first).to eq("Couldn't find Moat::Search::Album with 'id'=999")
+          expect(error).to eq(expected_error)
         end
-      end
-    end
-
-    context 'when raise a StandardError' do
-      let(:error) { StandardError.new }
-
-      before do
-        allow_any_instance_of(Moat::Search::Album).to receive(:update!).with(params.slice(:name, :year, :artist_id)).and_raise(error)
-      end
-
-      it 'rescue a StandardError' do
-        expect { described_class.update(params) }.to raise_error(StandardError)
       end
     end
   end
 
-  context 'on search' do
+  describe '.create' do
+    context 'when params is correct' do
+      let(:params) { { name: 'Teste', year: 2022, artist_id: 1 } }
+
+      it 'must to create a album object' do
+        described_class.create(params) do |album, error|
+          expect(
+            album.slice(
+              :name,
+              :year,
+              :artist_id
+            ).symbolize_keys
+          ).to eq(params)
+          expect(error).to be_nil
+        end
+      end
+    end
+
+    context 'when params is not correct' do
+      let(:params) { { name: nil, year: 0, artist_id: 0 } }
+      let(:expected_error) do
+        [
+          "Name can't be blank",
+          'Year must be greater than or equal to 1948'
+        ]
+      end
+
+      it 'must to get a array of errors' do
+        described_class.create(params) do |album, error|
+          expect(album).to be_nil
+          expect(error).to eq(expected_error)
+        end
+      end
+    end
+  end
+
+  describe '.update' do
+    let(:album) { create(:album, name: 'Some album', year: 1950, artist_id: 5) }
+
+    context 'when params is correct' do
+      let(:params) { { id: album.id, name: 'Teste', year: 2022, artist_id: 1 } }
+
+      it 'must to create a album object' do
+        described_class.update(params) do |album, error|
+          expect(
+            album.slice(
+              :id,
+              :name,
+              :year,
+              :artist_id
+            ).symbolize_keys
+          ).to eq(params)
+          expect(error).to be_nil
+        end
+      end
+    end
+
+    context 'when params is not correct' do
+      let(:params) { { id: album.id, name: nil, year: 0 } }
+      let(:expected_error) do
+        [
+          "Name can't be blank",
+          'Year must be greater than or equal to 1948'
+        ]
+      end
+
+      it 'must to get a array of errors' do
+        described_class.update(params) do |album, error|
+          expect(album).to be_nil
+          expect(error).to eq(expected_error)
+        end
+      end
+    end
+  end
+
+  describe '.search' do
     let(:params) do
       {
         query: 'query',
@@ -152,7 +129,7 @@ RSpec.describe Moat::Albums, type: :module do
 
     context 'on success' do
       before do
-        allow(Moat::Search::Album).to receive(:search).with(params_search).and_return(true)
+        allow(Moat::Album).to receive(:search).with(params_search).and_return(true)
       end
 
       specify { expect { |b| described_class.search(params, &b) }.to yield_with_args(true, nil) }
@@ -163,7 +140,7 @@ RSpec.describe Moat::Albums, type: :module do
         let(:error) { StandardError.new('Some Error') }
 
         before do
-          allow(Moat::Search::Album).to receive(:search).with(params_search).and_raise(error)
+          allow(Moat::Album).to receive(:search).with(params_search).and_raise(error)
         end
 
         specify { expect { |b| described_class.search(params, &b) }.to yield_with_args(nil, ['Some Error']) }
@@ -171,7 +148,7 @@ RSpec.describe Moat::Albums, type: :module do
     end
   end
 
-  context 'on delete' do
+  describe '.delete' do
     let(:album) { create(:album) }
     let(:params) { { id: album[:id] } }
 
@@ -182,7 +159,7 @@ RSpec.describe Moat::Albums, type: :module do
     it 'a album with success' do
       described_class.delete(params) do |instance, error|
         expect(instance).to eq(album)
-        expect { Moat::Search::Album.find(album[:id]) }.to raise_error(ActiveRecord::RecordNotFound)
+        expect { Moat::Album.find(album[:id]) }.to raise_error(ActiveRecord::RecordNotFound)
         expect(error).to be_nil
       end
     end

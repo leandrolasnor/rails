@@ -23,15 +23,22 @@ RSpec.describe Moat::AlbumsController do
   end
 
   describe 'GET /show' do
+    let(:album_show_params) do
+      {
+        id: album.id.to_s,
+        channel: headers_credentials[:client]
+      }.stringify_keys
+    end
+
     before do
-      allow(Moat::ShowAlbumService).to receive(:call).and_return(successful_response)
+      allow(Moat::HandleShowAlbumWorker).to receive(:perform_async).with(album_show_params)
+      get(moat_album_path(album.id), headers: headers_credentials, as: :json)
     end
 
     it 'renders a successful response' do
-      get(moat_album_path(album.id), headers: headers_credentials, as: :json)
-      expect(response.body).to eq successful_body_content
-      expect(Moat::ShowAlbumService).to have_received(:call).once
       expect(response).to be_successful
+      expect(response.body).to eq successful_body_content
+      expect(Moat::HandleShowAlbumWorker).to have_received(:perform_async).with(album_show_params)
     end
   end
 

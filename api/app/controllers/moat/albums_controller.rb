@@ -8,22 +8,22 @@ module ::Moat
     end
 
     def show
-      authorize!(:read, Album)
+      authorize!(:read, Moat::Album)
       deliver(Moat::ShowAlbumService.call(album_show_params))
     end
 
     def create
-      authorize!(:create, Album)
+      authorize!(:create, Moat::Album)
       deliver(Moat::CreateAlbumService.call(album_create_params))
     end
 
     def update
-      authorize!(:update, Album)
+      authorize!(:update, Moat::Album)
       deliver(Moat::UpdateAlbumService.call(album_update_params))
     end
 
     def destroy
-      authorize!(:destroy, Album)
+      authorize!(:destroy, Moat::Album)
       deliver(Moat::RemoveAlbumService.call(album_destroy_params))
     end
 

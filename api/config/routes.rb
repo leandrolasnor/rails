@@ -27,6 +27,13 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :nexoos do
+    resources :loans, id: /[0-9\-_]+/, only: [:create, :show]
+    namespace :loans do
+      get '/search(/:query)', query: /[a-zA-Z0-9\-_20%]+/, action: :search, as: :search
+    end
+  end
+
   mount Sidekiq::Web => '/sidekiq'
   mount_devise_token_auth_for 'User', at: 'auth', controllers: { sessions: 'overrides/sessions', registrations: 'overrides/registrations' }
 

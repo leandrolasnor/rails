@@ -3,29 +3,16 @@
 require 'rails_helper'
 
 RSpec.describe Latech::Address do
-  subject(:address) { create(:address) }
-
-  context 'validations' do
-    it 'must have validate_presence_of' do
-      expect(address).to validate_presence_of(:address)
-      expect(address).to validate_presence_of(:district)
-      expect(address).to validate_presence_of(:city)
-      expect(address).to validate_presence_of(:state)
-    end
-
-    context 'with zip field matched format /([0-9])\d{7}/' do
-      it { is_expected.to allow_value(23058500).for(:zip) }
-      it { is_expected.not_to allow_value(230500).for(:zip) }
-      it { is_expected.not_to allow_value(nil).for(:zip) }
-      it { is_expected.not_to allow_value('nil').for(:zip) }
-    end
-  end
-
-  context 'on Latech' do
-    context 'and ::Cepla' do
-      context 'and ::Address' do
-        it { expect(address).to respond_to(:capture) }
-      end
-    end
-  end
+  it { is_expected.to have_many(:address_assignments) }
+  it { is_expected.to have_many(:users).through(:address_assignments) }
+  it { is_expected.to allow_value(23058500).for(:zip) }
+  it { is_expected.not_to allow_value(230500).for(:zip) }
+  it { is_expected.not_to allow_value(nil).for(:zip) }
+  it { is_expected.not_to allow_value('nil').for(:zip) }
+  it { is_expected.to validate_presence_of(:address) }
+  it { is_expected.to validate_presence_of(:district) }
+  it { is_expected.to validate_presence_of(:city) }
+  it { is_expected.to validate_presence_of(:state) }
+  it { is_expected.to delegate_method(:capture).to(:cepla) }
+  it { is_expected.to respond_to(:capture) }
 end

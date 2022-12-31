@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :address, class: 'Latech::Search::Address' do
+  factory :address, class: 'Latech::Address' do
     address { Faker::Address.street_address }
     district { Faker::Name.middle_name }
     city { Faker::Address.city }

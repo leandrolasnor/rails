@@ -3,11 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe Latech::AddressAssignment do
-  context 'on Latech' do
-    context 'and ::MakeSureAssignment' do
-      context 'and ::AddressAssignment' do
-        it { expect(described_class.new).to respond_to(:assigned?) }
-      end
-    end
-  end
+  it { is_expected.to belong_to(:address) }
+  it { is_expected.to belong_to(:user) }
+  it { is_expected.to delegate_method(:assigned?).to(:make_sure_assignment) }
+  it { is_expected.to respond_to(:assigned?) }
 end

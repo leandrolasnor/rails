@@ -2,7 +2,7 @@
 
 module ::Latech
   class AddressAssignment < ApplicationRecord
-    belongs_to :address, class_name: 'Latech::Search::Address', touch: true
+    belongs_to :address, class_name: 'Latech::Address'
     belongs_to :user, class_name: 'Latech::User'
 
     delegate :assigned?, to: :make_sure_assignment

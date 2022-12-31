@@ -19,30 +19,32 @@ module ::Latech
       end
 
       def search(params)
-        yield(Latech::Search::Address.search(
-          query: params.fetch(:query, ''),
-          params: {
-            filter: ["user = '#{params.fetch(:user_id)}'"],
-            limit: params.dig(:pagination, :limit),
-            offset: params.dig(:pagination, :offset),
-            sort: ['address:asc']
-          }
-        ))
+        yield(
+          Latech::Address.search(
+            query: params.fetch(:query, ''),
+            params: {
+              filter: ["user = '#{params.fetch(:user_id)}'"],
+              limit: params.dig(:pagination, :limit),
+              offset: params.dig(:pagination, :offset),
+              sort: ['address:asc']
+            }
+          )
+        )
       rescue StandardError => error
         yield(nil, [error.message])
       end
 
       def capture(params)
         captured_address = ActiveRecord::Base.transaction do
-          Latech::Search::Address.create! do |a| # ActiveRecord::RecordInvalid
-            a.zip = params.fetch(:zip)
-            a.capture do |address| # HTTParty::Error # ArgumentError
+          Latech::Address.create! do |a| # ActiveRecord::RecordInvalid
+            a.zip = params.fetch(:zip) # KeyError # StandardError
+            a.capture do |address| # HTTParty::Error
               a.address = address.fetch(:logradouro)
               a.district = address.fetch(:bairro)
               a.city = address.fetch(:cidade)
               a.state = address.fetch(:uf)
             end
-            a.address_assignments << Latech::AddressAssignment.new { |o| o.user_id = params.fetch(:user_id) }
+            a.address_assignments << Latech::AddressAssignment.new(user_id: params.fetch(:user_id))
           end
         end
         yield(captured_address)

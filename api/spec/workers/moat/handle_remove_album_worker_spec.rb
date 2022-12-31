@@ -13,7 +13,7 @@ RSpec.describe Moat::HandleRemoveAlbumWorker, type: :worker do
     let(:event_success) { { type: 'ALBUM_REMOVED', payload: { album: Moat::AlbumSerializer.new(album).serializable_hash } } }
 
     before do
-      allow_any_instance_of(Moat::Search::Album).to receive(:artist).and_return({})
+      allow_any_instance_of(Moat::Album).to receive(:artist).and_return({})
       allow(Moat::Albums).to receive(:delete).with(params).and_yield(Moat::AlbumSerializer.new(album).serializable_hash, nil)
       allow(ActionCable.server).to receive(:broadcast).with(params[:channel], event_success)
       worker
@@ -27,11 +27,11 @@ RSpec.describe Moat::HandleRemoveAlbumWorker, type: :worker do
 
   context 'when there is a failure case' do
     let(:params) { { channel: 'channel', id: 9999 } }
-    let(:event_failure) { { type: 'ERRORS_FROM_ALBUM_REMOVED', payload: { errors: ["Couldn't find Moat::Search::Album with 'id'=9999"] } } }
+    let(:event_failure) { { type: 'ERRORS_FROM_ALBUM_REMOVED', payload: { errors: ["Couldn't find Moat::Album with 'id'=9999"] } } }
 
     before do
-      allow_any_instance_of(Moat::Search::Album).to receive(:artist).and_return({})
-      allow(Moat::Albums).to receive(:delete).with(params).and_yield(nil, ["Couldn't find Moat::Search::Album with 'id'=9999"])
+      allow_any_instance_of(Moat::Album).to receive(:artist).and_return({})
+      allow(Moat::Albums).to receive(:delete).with(params).and_yield(nil, ["Couldn't find Moat::Album with 'id'=9999"])
       allow(ActionCable.server).to receive(:broadcast).with(params[:channel], event_failure)
       worker
     end

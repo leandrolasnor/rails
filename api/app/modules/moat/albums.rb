@@ -7,7 +7,7 @@ module ::Moat
 
       def show(params)
         album = ApplicationRecord.reader do
-          Moat::AlbumSerializer.new(Moat::Search::Album.find(params.fetch(:id))).serializable_hash # ActiveRecord::RecordNotFound
+          Moat::AlbumSerializer.new(Moat::Album.find(params.fetch(:id))).serializable_hash # ActiveRecord::RecordNotFound
         end
         yield(album, nil)
       rescue ActiveRecord::RecordNotFound => error
@@ -23,10 +23,10 @@ module ::Moat
 
       def update(params)
         album = ApplicationRecord.reader do
-          Moat::Search::Album.find(params[:id]) # ActiveRecord::RecordNotFound
+          Moat::Album.find(params[:id]) # ActiveRecord::RecordNotFound
         end
         album.update!(params.slice(:name, :year, :artist_id))
-        yield(album, nil)
+        yield(album)
       rescue ActiveRecord::RecordInvalid => error
         yield(nil, error.record.errors.full_messages)
       rescue ActiveRecord::RecordNotFound => error
@@ -34,7 +34,7 @@ module ::Moat
       end
 
       def search(params)
-        albums = Moat::Search::Album.search(
+        albums = Moat::Album.search(
           query: params.fetch(:query, ''),
           params: {
             limit: params.dig(:pagination, :limit),
@@ -61,7 +61,7 @@ module ::Moat
       class << self
         def make(params)
           album = ApplicationRecord.reader do
-            Moat::Search::Album.find(params[:id]) # ActiveRecord::RecordNotFound
+            Moat::Album.find(params[:id]) # ActiveRecord::RecordNotFound
           end
           album.destroy! # ActiveRecord::RecordNotDestroyed
         end
@@ -71,7 +71,7 @@ module ::Moat
     module Factory
       class << self
         def make(params)
-          album = Moat::Search::Album.new do |s|
+          album = Moat::Album.new do |s|
             s.name      = params[:name]
             s.year      = params[:year]
             s.artist_id = params[:artist_id]

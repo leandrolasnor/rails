@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :address_assignment, class: 'Latech::AddressAssignment' do
-    address { nil }
-    user { nil }
+    address
+    user
   end
 end

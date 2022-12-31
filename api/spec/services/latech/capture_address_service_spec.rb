@@ -12,7 +12,7 @@ RSpec.describe Latech::CaptureAddressService, type: :service do
     context 'and HandleCaptureAddressWorker is called' do
       before do
         successful_response[:content][:payload] = nil
-        allow(Latech::Search::Address).to receive(:search).and_return({ hits: [] })
+        allow(Latech::Address).to receive(:search).and_return({ hits: [] })
         allow(Latech::HandleCaptureAddressWorker).to receive(:perform_async).with(params)
       end
 

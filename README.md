@@ -1,4 +1,4 @@
-## Rails API | Docker | Redis | MeiliSearch | ActionCable | Sidekiq
+## Rails | Docker | PostgreSQL | Redis | MeiliSearch | ActionCable | Sidekiq
 
 Faça o clone do repositório `git clone git@github.com:leandrolasnor/rails.git`
 
@@ -10,8 +10,8 @@ Rode os serviços via Docker :whale: `docker compose up -d`
 
 Agora rode `docker compose ps` e deverá ter cinto containers de pé
 
-`rails` `redis` `sidekiq`
-`meilisearch` `cable`
+`rails` `redis` `sidekiq` `primary`
+`meilisearch` `cable` `replica`
 
 #### [routes](http://localhost:3000/rails/info/routes)
 

@@ -10,8 +10,13 @@ module ::Latech
       end
 
       def capture
+        yield(captured_address)
+      end
+
+      private
+
+      def captured_address
         @captured_address ||= Latech::Cepla::Http::Services::GetAddress.call!(zip: address.zip) # HTTParty::Error
-        yield(@captured_address)
       end
     end
   end
