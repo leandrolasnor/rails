@@ -55,7 +55,6 @@ services:
             MEILI_MASTER_KEY: 4f6bdbe90bcd297b6d
             MEILI_NO_ANALYTICS: true
     sidekiq:
-        # build: ./api
         image:  rails/api
         container_name: sidekiq
         command: sh -c "bundle && bundle exec sidekiq"
@@ -64,7 +63,6 @@ services:
         depends_on:
             - redis
     cable:
-        # build: ./api
         image:  rails/api
         container_name: cable
         command: sh -c "rm -f tmp/pids/server.pid && bundle && puma -p 28080 cable/config.ru"

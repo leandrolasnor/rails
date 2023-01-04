@@ -7,7 +7,7 @@ FactoryBot.define do
     city { Faker::Address.city }
     state { Faker::Address.state_abbr }
     zip { Faker::Number.number(digits: 8) }
-    users { [create(:user)] }
+    users { [create(:latech_user)] }
 
     trait :belongs_to_admin_user do
       before(:create) do |address|

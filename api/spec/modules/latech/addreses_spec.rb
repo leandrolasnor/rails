@@ -6,7 +6,7 @@ RSpec.describe Latech::Addreses, type: :module do
   describe '.make_sure_assignment' do
     context 'when the address is not assignment' do
       let(:address) { create(:address) }
-      let(:user) { create(:user) }
+      let(:user) { create(:latech_user) }
       let(:params) { { address_id: address.id, user_id: user.id } }
       let(:expected_assignment) do
         {
@@ -115,7 +115,7 @@ RSpec.describe Latech::Addreses, type: :module do
   end
 
   describe '.capture' do
-    let(:user) { create(:user) }
+    let(:user) { create(:latech_user) }
     let(:params) { { zip: '23058500', user_id: user.id } }
 
     context 'when given valid params' do
