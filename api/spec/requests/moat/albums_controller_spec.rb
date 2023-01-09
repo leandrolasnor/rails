@@ -4,21 +4,23 @@ require 'rails_helper'
 
 RSpec.describe Moat::AlbumsController do
   let(:album) { create(:album) }
-  let(:album_attributes) { build(:album).attributes }
   let(:headers_credentials) do
-    sign_in_response = sign_in
     {
-      uid: sign_in_response.dig(:headers, 'uid'),
-      client: sign_in_response.dig(:headers, 'client'),
-      'access-token': sign_in_response.dig(:headers, 'access-token')
+      uid: sign_in_common_user.dig(:headers, 'uid'),
+      client: sign_in_common_user.dig(:headers, 'client'),
+      'access-token': sign_in_common_user.dig(
+        :headers,
+        'access-token'
+      )
     }
   end
   let(:admin_headers_credentials) do
-    admin_sign_in_response = sign_in(user: { email: 'otherteste@teste.com', password: '123456' })
     {
-      uid: admin_sign_in_response.dig(:headers, 'uid'),
-      client: admin_sign_in_response.dig(:headers, 'client'),
-      'access-token': admin_sign_in_response.dig(:headers, 'access-token')
+      uid: sign_in_admin_user.dig(:headers, 'uid'),
+      client: sign_in_admin_user.dig(:headers, 'client'),
+      'access-token': sign_in_admin_user.dig(
+        :headers, 'access-token'
+      )
     }
   end
 
@@ -27,97 +29,181 @@ RSpec.describe Moat::AlbumsController do
       {
         id: album.id.to_s,
         channel: headers_credentials[:client]
-      }.stringify_keys
+      }.deep_stringify_keys!
     end
 
     before do
-      allow(Moat::HandleShowAlbumWorker).to receive(:perform_async).with(album_show_params)
-      get(moat_album_path(album.id), headers: headers_credentials, as: :json)
+      allow(
+        Moat::HandleShowAlbumWorker
+      ).to receive(:perform_async).with(album_show_params)
+      get(
+        moat_album_path(album.id),
+        headers: headers_credentials, as: :json
+      )
     end
 
-    it 'renders a successful response' do
+    it 'must to response successful way' do
       expect(response).to be_successful
-      expect(response.body).to eq successful_body_content
-      expect(Moat::HandleShowAlbumWorker).to have_received(:perform_async).with(album_show_params)
+      expect(json_body).to eq(successful_body_content)
+      expect(
+        Moat::HandleShowAlbumWorker
+      ).to have_received(:perform_async).with(album_show_params)
     end
   end
 
   describe 'GET /search' do
-    before do
-      allow(Moat::SearchAlbumsService).to receive(:call).and_return(successful_response)
+    let(:query) { 'query' }
+    let(:album_search_params) do
+      {
+        query: query,
+        channel: headers_credentials[:client],
+        pagination: {
+          limit: 10,
+          offset: 0
+        }
+      }.deep_stringify_keys!
     end
 
-    it 'renders a successful response' do
-      get(moat_albums_search_path, headers: headers_credentials, as: :json)
-      expect(response.body).to eq successful_body_content
-      expect(Moat::SearchAlbumsService).to have_received(:call).once
+    before do
+      allow(
+        Moat::HandleSearchAlbumsWorker
+      ).to receive(:perform_async).with(album_search_params)
+      get(
+        moat_albums_search_path(query: query),
+        headers: headers_credentials, as: :json
+      )
+    end
+
+    it 'must to response successful way' do
       expect(response).to be_successful
+      expect(json_body).to eq(successful_body_content)
+      expect(
+        Moat::HandleSearchAlbumsWorker
+      ).to have_received(:perform_async).with(album_search_params)
     end
   end
 
   describe 'PUT /update' do
+    let(:name) { 'some other name' }
+    let(:params) do
+      {
+        name: name
+      }
+    end
+    let(:album_update_params) do
+      {
+        id: album.id.to_s,
+        name: name,
+        channel: headers_credentials[:client]
+      }.deep_stringify_keys!
+    end
+
     before do
-      allow(Moat::UpdateAlbumService).to receive(:call).and_return(successful_response)
+      allow(
+        Moat::HandleUpdateAlbumWorker
+      ).to receive(:perform_async).with(album_update_params)
+      put(
+        moat_album_path(album.id),
+        params: { album: params },
+        headers: headers_credentials, as: :json
+      )
     end
 
-    it 'renders a successful response' do
-      put(moat_album_path(album.id), params: { album: { name: Faker::Games::Pokemon.name } }, headers: headers_credentials, as: :json)
-      expect(response.body).to eq successful_body_content
-      expect(Moat::UpdateAlbumService).to have_received(:call).once
+    it 'must to response successful way' do
       expect(response).to be_successful
-    end
-  end
-
-  describe 'PATCH /update' do
-    before do
-      allow(Moat::UpdateAlbumService).to receive(:call).and_return(successful_response)
-    end
-
-    it 'renders a successful response' do
-      patch(moat_album_path(album.id), params: { album: { name: Faker::Games::Pokemon.name } }, headers: headers_credentials, as: :json)
-      expect(response.body).to eq successful_body_content
-      expect(Moat::UpdateAlbumService).to have_received(:call).once
-      expect(response).to be_successful
+      expect(json_body).to eq(successful_body_content)
+      expect(
+        Moat::HandleUpdateAlbumWorker
+      ).to have_received(:perform_async).with(album_update_params)
     end
   end
 
   describe 'POST /create' do
-    before do
-      allow(Moat::CreateAlbumService).to receive(:call).and_return(successful_response)
+    let(:params) do
+      {
+        name: 'some name',
+        year: 1991,
+        artist_id: 1
+      }
+    end
+    let(:album_create_params) do
+      params.merge(
+        channel: headers_credentials[:client]
+      ).deep_stringify_keys!
     end
 
-    it 'renders a successful response' do
-      post(moat_albums_path, params: { album: album_attributes }, headers: headers_credentials, as: :json)
-      expect(response.body).to eq successful_body_content
-      expect(Moat::CreateAlbumService).to have_received(:call).once
+    before do
+      allow(
+        Moat::HandleCreateAlbumWorker
+      ).to receive(:perform_async).with(album_create_params)
+      post(
+        moat_albums_path,
+        params: { album: params },
+        headers: headers_credentials, as: :json
+      )
+    end
+
+    it 'must to response successful way' do
       expect(response).to be_successful
+      expect(json_body).to eq(successful_body_content)
+      expect(
+        Moat::HandleCreateAlbumWorker
+      ).to have_received(:perform_async).with(album_create_params)
     end
   end
 
   describe 'DELETE /destroy' do
-    before do
-      allow(Moat::RemoveAlbumService).to receive(:call).and_return(successful_response)
-    end
-
-    context 'when its rendered a unauthorized response' do
-      it 'the user is not admin' do
-        delete(moat_album_path(album.id), headers: headers_credentials, as: :json)
-        expect(response.body.blank?).to be(true)
-        expect(Moat::RemoveAlbumService).not_to have_received(:call)
-        expect(response).to be_unauthorized
+    context 'when user have authorization' do
+      let(:album_destroy_params) do
+        {
+          id: album.id.to_s,
+          channel: admin_headers_credentials[:client]
+        }
       end
-    end
 
-    context 'when its rendered a successful response' do
       before do
-        allow(Moat::RemoveAlbumService).to receive(:call).and_return(successful_response)
+        allow(
+          Moat::HandleRemoveAlbumWorker
+        ).to receive(:perform_async).with(album_destroy_params)
+        delete(
+          moat_album_path(album.id),
+          headers: admin_headers_credentials, as: :json
+        )
       end
 
-      it 'the user is admin' do
-        delete(moat_album_path(album.id), headers: admin_headers_credentials, as: :json)
-        expect(response.body).to eq successful_body_content
-        expect(Moat::RemoveAlbumService).to have_received(:call).once
+      it 'must to response successful way' do
         expect(response).to be_successful
+        expect(json_body).to eq successful_body_content
+        expect(
+          Moat::HandleRemoveAlbumWorker
+        ).to have_received(:perform_async).with(album_destroy_params)
+      end
+    end
+
+    context 'when user have not authorization' do
+      let(:album_destroy_params) do
+        {
+          id: album.id,
+          channel: headers_credentials[:client]
+        }
+      end
+
+      before do
+        allow(
+          Moat::HandleRemoveAlbumWorker
+        ).to receive(:perform_async).with(album_destroy_params)
+        delete(
+          moat_album_path(album.id),
+          headers: headers_credentials, as: :json
+        )
+      end
+
+      it 'must to response unauthorized way' do
+        expect(response).to be_unauthorized
+        expect(json_body).to be_nil
+        expect(
+          Moat::HandleRemoveAlbumWorker
+        ).not_to have_received(:perform_async).with(album_destroy_params)
       end
     end
   end

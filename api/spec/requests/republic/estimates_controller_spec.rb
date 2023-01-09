@@ -4,15 +4,17 @@ require 'rails_helper'
 
 RSpec.describe Republic::EstimatesController do
   let(:headers_credentials) do
-    sign_in_response = sign_in
     {
-      uid: sign_in_response.dig(:headers, 'uid'),
-      client: sign_in_response.dig(:headers, 'client'),
-      'access-token': sign_in_response.dig(:headers, 'access-token')
+      uid: sign_in_common_user.dig(:headers, 'uid'),
+      client: sign_in_common_user.dig(:headers, 'client'),
+      'access-token': sign_in_common_user.dig(
+        :headers,
+        'access-token'
+      )
     }
   end
 
-  describe '#quantity_of_can_of_paint' do
+  describe 'POST /quantity_of_can_of_paint' do
     context 'with correct params' do
       let(:params) do
         {
@@ -66,11 +68,15 @@ RSpec.describe Republic::EstimatesController do
       end
 
       before do
-        post(republic_estimates_quantity_of_can_of_paint_path, params: params, headers: headers_credentials, as: :json)
+        post(
+          republic_estimates_quantity_of_can_of_paint_path,
+          params: params,
+          headers: headers_credentials, as: :json
+        )
       end
 
       it 'must receive quantity of can of paint' do
-        expect(response).to have_http_status(:ok)
+        expect(response).to be_successful
         expect(json_body).to eq(expected_body)
       end
     end
@@ -154,16 +160,20 @@ RSpec.describe Republic::EstimatesController do
       end
 
       before do
-        post(republic_estimates_quantity_of_can_of_paint_path, params: params, headers: headers_credentials, as: :json)
+        post(
+          republic_estimates_quantity_of_can_of_paint_path,
+          params: params,
+          headers: headers_credentials, as: :json
+        )
       end
 
       it 'must receive a errors messages' do
-        expect(response).to have_http_status(:bad_request)
+        expect(response).to be_bad_request
         expect(json_body).to eq(expected_body)
       end
     end
 
-    context 'when a key error happens' do
+    context 'with nil param' do
       let(:params) { nil }
       let(:expected_body) do
         {
@@ -173,11 +183,15 @@ RSpec.describe Republic::EstimatesController do
       end
 
       before do
-        post(republic_estimates_quantity_of_can_of_paint_path, params: params, headers: headers_credentials, as: :json)
+        post(
+          republic_estimates_quantity_of_can_of_paint_path,
+          params: params,
+          headers: headers_credentials, as: :json
+        )
       end
 
       it 'must receive a error response' do
-        expect(response).to have_http_status(:bad_request)
+        expect(response).to be_bad_request
         expect(json_body).to eq(expected_body)
       end
     end

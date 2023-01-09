@@ -5,11 +5,10 @@ require 'rails_helper'
 RSpec.describe ApiController do
   let(:address) { create(:address) }
   let(:headers_credentials) do
-    sign_in_response = sign_in
     {
-      uid: sign_in_response.dig(:headers, 'uid'),
-      client: sign_in_response.dig(:headers, 'client'),
-      'access-token': sign_in_response.dig(:headers, 'access-token')
+      uid: sign_in_common_user.dig(:headers, 'uid'),
+      client: sign_in_common_user.dig(:headers, 'client'),
+      'access-token': sign_in_common_user.dig(:headers, 'access-token')
     }
   end
 

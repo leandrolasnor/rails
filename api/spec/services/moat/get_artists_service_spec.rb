@@ -12,7 +12,7 @@ RSpec.describe Moat::GetArtistsService, type: :service do
 
     it 'must to return successful body content' do
       expect(service).to eq successful_response
-      expect(Moat::HandleGetArtistsWorker).to have_received(:perform_async).once
+      expect(Moat::HandleGetArtistsWorker).to have_received(:perform_async)
     end
 
     context 'when rescue a error' do
@@ -20,13 +20,15 @@ RSpec.describe Moat::GetArtistsService, type: :service do
       let(:service) { described_class.call }
 
       before do
-        allow(Rails.logger).to receive(:error).with(error.message)
-        allow(Moat::HandleGetArtistsWorker).to receive(:perform_async).and_raise(error)
+        allow(Rails.logger).to receive(:error).with(error)
+        allow(
+          Moat::HandleGetArtistsWorker
+        ).to receive(:perform_async).and_raise(error)
       end
 
       it 'but did can to handle' do
         expect(service).to eq(unsuccessful_response)
-        expect(Rails.logger).to have_received(:error).with(error.message).once
+        expect(Rails.logger).to have_received(:error).with(error)
       end
     end
   end

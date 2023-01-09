@@ -71,11 +71,12 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
-  config.include(Devise::Test::ControllerHelpers, type: [:controller, :request, :channel, :feature])
   config.include(FactoryBot::Syntax::Methods)
   config.include(Api, type: :request)
-  config.include(Auth)
-  config.include(Service)
+  config.include(Auth, type: :request)
+  config.include(Auth, type: :channel)
+  config.include(Service, type: :request)
+  config.include(Service, type: :service)
   config.include(Shoulda::Matchers::ActiveModel, type: :model)
   config.include(Shoulda::Matchers::ActiveRecord, type: :model)
 end

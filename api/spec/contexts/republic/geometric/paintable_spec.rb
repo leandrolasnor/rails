@@ -3,9 +3,11 @@
 require 'rails_helper'
 
 RSpec.describe Republic::Geometric::Paintable do
-  subject { described_class.new(Republic::Paintable.new(attributes)) }
-
   describe '.area' do
+    subject { paintable.area }
+
+    let(:paintable) { Republic::Paintable.new(attributes) }
+
     context 'when there are doors and windows on wall' do
       let(:attributes) do
         {
@@ -31,7 +33,7 @@ RSpec.describe Republic::Geometric::Paintable do
       end
       let(:expected_area) { 18.68 }
 
-      it { expect(subject.area).to eq(expected_area) }
+      it { is_expected.to eq(expected_area) }
     end
 
     context 'when there are not doors or windows on wall' do
@@ -53,7 +55,7 @@ RSpec.describe Republic::Geometric::Paintable do
       end
       let(:expected_area) { 1 }
 
-      it { expect(subject.area).to eq(expected_area) }
+      it { is_expected.to eq(expected_area) }
     end
   end
 end

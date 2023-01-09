@@ -5,10 +5,20 @@ require 'rails_helper'
 RSpec.describe Moat::Artist, type: :module do
   skip '.all' do
     let(:url) { ENV.fetch('MOAT_URI') }
-    let(:headers) { { 'Basic' => Rails.application.credentials.dig(:moat, :token) } }
+    let(:headers) do
+      {
+        'Basic' => Rails.application.credentials.dig(:moat, :token)
+      }
+    end
 
     context 'when response code is 200' do
-      let(:response) { instance_double(HTTParty::Response, body: response_body, code: 200) }
+      let(:response) do
+        instance_double(
+          HTTParty::Response,
+          body: response_body,
+          code: 200
+        )
+      end
       let(:response_body) do
         [
           { id: 1, name: 'Artist1', twitter: '@Artist1' },
@@ -18,19 +28,35 @@ RSpec.describe Moat::Artist, type: :module do
 
       before do
         allow(HTTParty).to receive(:get).and_return(response)
-        allow(JSON).to receive(:parse).and_return(instance_double(flatten: response_body))
+        allow(JSON).
+          to receive(:parse).
+          and_return(instance_double(flatten: response_body))
         described_class.all
       end
 
       it 'must to call HTTParty and JSON.parse' do
         expect(HTTParty).to have_received(:get).with(url, headers: headers)
-        expect(JSON).to have_received(:parse).with(response_body, symbolize_names: true)
+        expect(JSON).
+          to have_received(:parse).
+          with(response_body, symbolize_names: true)
       end
     end
 
     context 'when response code is not 200' do
-      let(:response) { instance_double(HTTParty::Response, body: '400 Bad Request', code: 400) }
-      let(:log_message) { { from: 'Moat::Artist.all', code: response.code, body: response.body } }
+      let(:response) do
+        instance_double(
+          HTTParty::Response,
+          body: '400 Bad Request',
+          code: 400
+        )
+      end
+      let(:log_message) do
+        {
+          from: 'Moat::Artist.all',
+          code: response.code,
+          body: response.body
+        }
+      end
       let(:call) { described_class.all }
 
       before do

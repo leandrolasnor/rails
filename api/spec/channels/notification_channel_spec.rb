@@ -2,25 +2,26 @@
 
 require 'rails_helper'
 
-RSpec.describe NotificationChannel, type: [:channel, :request, :controller, :feature] do
+RSpec.describe NotificationChannel, type: [:channel, :request] do
   describe 'subscription' do
-    context 'when send correctly connect params' do
-      let(:sign_in_response) { sign_in(user: { email: 'teste@teste.com', password: '123456' }) }
+    let(:client) { sign_in_common_user.dig(:headers, 'client') }
 
-      it 'be confirmed' do
-        client = sign_in_response[:headers]['client']
+    context 'when send correctly connect params' do
+      before do
         stub_connection client: client
         subscribe
-        expect(subscription).to be_confirmed
       end
+
+      it { expect(subscription).to be_confirmed }
     end
 
     context 'when send invalid connect params' do
-      it 'not be confirmed' do
+      before do
         stub_connection client: nil
         subscribe
-        expect(subscription).not_to be_confirmed
       end
+
+      it { expect(subscription).not_to be_confirmed }
     end
   end
 end

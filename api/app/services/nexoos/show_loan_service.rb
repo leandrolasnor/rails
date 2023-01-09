@@ -6,7 +6,7 @@ module ::Nexoos
       Nexoos::HandleShowLoanWorker.perform_async(params) if cached_loan.nil?
       handle_response
     rescue StandardError => error
-      Rails.logger.error(error.message)
+      Rails.logger.error(error)
       error_response
     end
 

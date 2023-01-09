@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'json'
 
-RSpec.describe ApplicationCable::Connection, type: [:channel, :request, :controller, :feature] do
+RSpec.describe ApplicationCable::Connection, type: [:channel, :request] do
   context 'on connect' do
-    let(:sign_in_response) { sign_in }
+    let(:ws_token) { sign_in_common_user.dig(:body, :ws_token) }
+    let(:client) { sign_in_common_user.dig(:headers, 'client') }
 
     it 'when send connection params' do
-      connect "/cable?ws_token=#{sign_in_response[:body][:ws_token]}"
-      expect(connection.client).to eq sign_in_response[:headers]['client']
+      connect "/cable?ws_token=#{ws_token}"
+      expect(connection.client).to eq client
     end
   end
 

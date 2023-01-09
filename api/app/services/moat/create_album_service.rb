@@ -6,7 +6,7 @@ module ::Moat
       Moat::HandleCreateAlbumWorker.perform_async(params)
       handle_response
     rescue StandardError => error
-      Rails.logger.error(error.message)
+      Rails.logger.error(error)
       error_response
     end
   end

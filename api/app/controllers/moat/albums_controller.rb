@@ -46,7 +46,10 @@ module ::Moat
     end
 
     def album_update_params
-      album_params.merge(id: params[:id]).permit(:id, :name, :year, :artist_id, :channel)
+      album_params.merge(id: params[:id]).permit(
+        :id, :name, :year,
+        :artist_id, :channel
+      )
     end
 
     def album_search_params

@@ -8,12 +8,16 @@ RSpec.describe Moat::UpdateAlbumService, type: :service do
     let(:service) { described_class.call(params) }
 
     before do
-      allow(Moat::HandleUpdateAlbumWorker).to receive(:perform_async).with(params)
+      allow(
+        Moat::HandleUpdateAlbumWorker
+      ).to receive(:perform_async).with(params)
     end
 
     it 'must to return successful body content' do
       expect(service).to eq successful_response
-      expect(Moat::HandleUpdateAlbumWorker).to have_received(:perform_async).with(params).once
+      expect(
+        Moat::HandleUpdateAlbumWorker
+      ).to have_received(:perform_async).with(params)
     end
 
     context 'when rescue a StandardError' do
@@ -21,13 +25,15 @@ RSpec.describe Moat::UpdateAlbumService, type: :service do
       let(:service) { described_class.call(params) }
 
       before do
-        allow(Rails.logger).to receive(:error).with(error.message)
-        allow(Moat::HandleUpdateAlbumWorker).to receive(:perform_async).with(params).and_raise(error)
+        allow(Rails.logger).to receive(:error).with(error)
+        allow(
+          Moat::HandleUpdateAlbumWorker
+        ).to receive(:perform_async).with(params).and_raise(error)
       end
 
       it 'but did can to handle' do
         expect(service).to eq(unsuccessful_response)
-        expect(Rails.logger).to have_received(:error).with(error.message).once
+        expect(Rails.logger).to have_received(:error).with(error)
       end
     end
   end
