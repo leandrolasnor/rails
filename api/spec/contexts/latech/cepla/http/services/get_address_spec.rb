@@ -10,11 +10,29 @@ RSpec.describe Latech::Cepla::Http::Services::GetAddress, type: :context do
 
   describe '.call!' do
     context 'on success' do
-      let(:response) { instance_double(HTTParty::Response, body: parsed_response.to_json, code: 200, parsed_response: parsed_response) }
-      let(:parsed_response) { { cep: 23058500, uf: 'RJ', cidade: 'Rio de Janeiro', bairro: 'Cosmos', logradouro: 'Rua Aripuana' } }
+      let(:response) do
+        instance_double(
+          HTTParty::Response,
+          body: parsed_response.to_json,
+          code: 200,
+          parsed_response: parsed_response
+        )
+      end
+      let(:parsed_response) do
+        {
+          cep: 23058500,
+          uf: 'RJ',
+          cidade: 'Rio de Janeiro',
+          bairro: 'Cosmos',
+          logradouro: 'Rua Aripuana'
+        }
+      end
 
       before do
-        allow(HTTParty).to receive(:get).with(url, headers: headers).and_return(response)
+        allow(HTTParty).
+          to receive(:get).
+          with(url, headers: headers).
+          and_return(response)
       end
 
       it 'must to return address data from external api' do
@@ -25,18 +43,42 @@ RSpec.describe Latech::Cepla::Http::Services::GetAddress, type: :context do
 
     context 'on error' do
       context 'when code is equal 400' do
-        let(:response) { instance_double(HTTParty::Response, body: parsed_response.to_json, code: 400, parsed_response: parsed_response) }
+        let(:response) do
+          instance_double(
+            HTTParty::Response,
+            body: parsed_response.to_json,
+            code: 400,
+            parsed_response: parsed_response
+          )
+        end
         let(:parsed_response) { {} }
+        let(:error) do
+          {
+            from: "Latech::Cepla::Http::Services::GetAddress.call!(zip:#{zip})",
+            code: response.code,
+            body: response.body
+          }
+        end
 
         before do
-          allow(HTTParty).to receive(:get).with(url, headers: headers).and_return(response)
-          allow(Rails.logger).to receive(:error).with({ from: "Latech::Cepla::Http::Services::GetAddress.call!(zip:#{zip})", code: response.code, body: response.body })
+          allow(HTTParty).
+            to receive(:get).
+            with(url, headers: headers).
+            and_return(response)
+          allow(Rails.logger).
+            to receive(:error).
+            with(error)
         end
 
         it 'must to raise error_on_http_service_from_address_capture error' do
-          expect { service }.to raise_error(I18n.t(:error_on_http_service_from_address_capture))
-          expect(HTTParty).to have_received(:get).with(url, headers: headers)
-          expect(Rails.logger).to have_received(:error).with({ from: "Latech::Cepla::Http::Services::GetAddress.call!(zip:#{zip})", code: response.code, body: response.body })
+          expect(service).
+            to raise_error(I18n.t(:error_on_http_service_from_address_capture))
+          expect(HTTParty).
+            to have_received(:get).
+            with(url, headers: headers)
+          expect(Rails.logger).
+            to have_received(:error).
+            with(error)
         end
       end
     end
@@ -51,7 +93,9 @@ RSpec.describe Latech::Cepla::Http::Services::GetAddress, type: :context do
 
         it 'must to raise a ArgumentError error' do
           expect { service }.to raise_error(ArgumentError)
-          expect(HTTParty).not_to have_received(:get).with(url, headers: headers)
+          expect(HTTParty).
+            not_to have_received(:get).
+            with(url, headers: headers)
         end
       end
 
@@ -59,8 +103,13 @@ RSpec.describe Latech::Cepla::Http::Services::GetAddress, type: :context do
         let(:error) { HTTParty::Error.new('Some Error') }
 
         before do
-          allow(HTTParty).to receive(:get).with(url, headers: headers).and_raise(error)
-          allow(Rails.logger).to receive(:error).with(error.message)
+          allow(HTTParty).
+            to receive(:get).
+            with(url, headers: headers).
+            and_raise(error)
+          allow(Rails.logger).
+            to receive(:error).
+            with(error.message)
         end
 
         it 'must to raise a HTTParty::Error' do

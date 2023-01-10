@@ -30,7 +30,12 @@ RSpec.describe Latech::Addreses, type: :module do
 
     context 'when the address already is assignment' do
       let(:address) { create(:address) }
-      let(:params) { { address_id: address.id, user_id: address.users.first.id } }
+      let(:params) do
+        {
+          address_id: address.id,
+          user_id: address.users.first.id
+        }
+      end
 
       it 'must to return nil' do
         described_class.make_sure_assignment(params) do |assignment, errors|
@@ -110,7 +115,10 @@ RSpec.describe Latech::Addreses, type: :module do
       end
       let(:expected_errors) { ['key not found: :user_id'] }
 
-      specify { expect { |b| described_class.search(params, &b) }.to yield_with_args(nil, expected_errors) }
+      it do
+        expect { |b| described_class.search(params, &b) }.
+          to yield_with_args(nil, expected_errors)
+      end
     end
   end
 
@@ -123,7 +131,10 @@ RSpec.describe Latech::Addreses, type: :module do
       let(:result_cepla) { build(:result_cepla) }
 
       before do
-        allow(Latech::Cepla::Http::Services::GetAddress).to receive(:call!).with(zip: params[:zip]).and_return(result_cepla)
+        allow(Latech::Cepla::Http::Services::GetAddress).
+          to receive(:call!).
+          with(zip: params[:zip]).
+          and_return(result_cepla)
       end
 
       it 'must to create a address by captured address data' do
@@ -149,7 +160,10 @@ RSpec.describe Latech::Addreses, type: :module do
       let(:expected_errors) { ["Address can't be blank"] }
 
       before do
-        allow(Latech::Cepla::Http::Services::GetAddress).to receive(:call!).with(zip: params[:zip]).and_return(result_cepla)
+        allow(Latech::Cepla::Http::Services::GetAddress).
+          to receive(:call!).
+          with(zip: params[:zip]).
+          and_return(result_cepla)
       end
 
       it 'must to return a error message from ActiveRecord::RecordInvalid' do
@@ -162,10 +176,15 @@ RSpec.describe Latech::Addreses, type: :module do
     context 'when receive http error from api external' do
       let(:result_cepla) { build(:result_cepla, logradouro: '') }
       let(:httparty_error) { HTTParty::Error.new }
-      let(:expectec_httparty_error) { [I18n.t(:error_on_http_service_from_address_capture)] }
+      let(:expectec_httparty_error) do
+        [I18n.t(:error_on_http_service_from_address_capture)]
+      end
 
       before do
-        allow(Latech::Cepla::Http::Services::GetAddress).to receive(:call!).with(zip: params[:zip]).and_raise(httparty_error)
+        allow(Latech::Cepla::Http::Services::GetAddress).
+          to receive(:call!).
+          with(zip: params[:zip]).
+          and_raise(httparty_error)
       end
 
       it 'must to return a error message from HTTParty::Error' do

@@ -129,10 +129,16 @@ RSpec.describe Moat::Albums, type: :module do
 
     context 'on success' do
       before do
-        allow(Moat::Album).to receive(:search).with(params_search).and_return(true)
+        allow(Moat::Album).
+          to receive(:search).
+          with(params_search).
+          and_return(true)
       end
 
-      specify { expect { |b| described_class.search(params, &b) }.to yield_with_args(true, nil) }
+      it do
+        expect { |b| described_class.search(params, &b) }.
+          to yield_with_args(true, nil)
+      end
     end
 
     context 'on exception' do
@@ -140,10 +146,16 @@ RSpec.describe Moat::Albums, type: :module do
         let(:error) { StandardError.new('Some Error') }
 
         before do
-          allow(Moat::Album).to receive(:search).with(params_search).and_raise(error)
+          allow(Moat::Album).
+            to receive(:search).
+            with(params_search).
+            and_raise(error)
         end
 
-        specify { expect { |b| described_class.search(params, &b) }.to yield_with_args(nil, ['Some Error']) }
+        it do
+          expect { |b| described_class.search(params, &b) }.
+            to yield_with_args(nil, ['Some Error'])
+        end
       end
     end
   end
@@ -159,20 +171,33 @@ RSpec.describe Moat::Albums, type: :module do
     it 'a album with success' do
       described_class.delete(params) do |instance, error|
         expect(instance).to eq(album)
-        expect { Moat::Album.find(album[:id]) }.to raise_error(ActiveRecord::RecordNotFound)
+        expect(
+          Moat::Album.find(album[:id])
+        ).to raise_error(ActiveRecord::RecordNotFound)
         expect(error).to be_nil
       end
     end
 
-    context 'when raise a [ActiveRecord::RecordNotFound, ActiveRecord::RecordNotDestroyed]' do
+    context 'when raise a [::RecordNotFound, ::RecordNotDestroyed]' do
       let(:params_deny_destroy) { { id: 9999 } }
       let(:params_invalid) { { id: 999 } }
       let(:record_not_found_error) { ActiveRecord::RecordNotFound.new }
-      let(:record_not_destroyed_error) { ActiveRecord::RecordNotDestroyed.new('you cannot destroy', create(:album)) }
+      let(:record_not_destroyed_error) do
+        ActiveRecord::RecordNotDestroyed.new(
+          'you cannot destroy',
+          create(:album)
+        )
+      end
 
       before do
-        allow(Moat::Albums::Sweeper).to receive(:make).with(params_invalid).and_raise(record_not_found_error)
-        allow(Moat::Albums::Sweeper).to receive(:make).with(params_deny_destroy).and_raise(record_not_destroyed_error)
+        allow(Moat::Albums::Sweeper).
+          to receive(:make).
+          with(params_invalid).
+          and_raise(record_not_found_error)
+        allow(Moat::Albums::Sweeper).
+          to receive(:make).
+          with(params_deny_destroy).
+          and_raise(record_not_destroyed_error)
       end
 
       it 'album not found' do
@@ -194,7 +219,9 @@ RSpec.describe Moat::Albums, type: :module do
       let(:error) { StandardError.new }
 
       before do
-        allow(Moat::Albums::Sweeper).to receive(:make).with(params).and_raise(error)
+        allow(
+          Moat::Albums::Sweeper
+        ).to receive(:make).with(params).and_raise(error)
       end
 
       it 'rescue a StandardError' do

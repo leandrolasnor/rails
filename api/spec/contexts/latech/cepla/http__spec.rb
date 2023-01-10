@@ -18,7 +18,9 @@ RSpec.describe Latech::Cepla::Http, type: :context do
       end
 
       it 'must to prepend' do
-        expect(Latech::Cepla::Http::Services::GetAddress.ancestors.first).to be(described_class)
+        expect(
+          Latech::Cepla::Http::Services::GetAddress.ancestors.first
+        ).to be(described_class)
       end
     end
 
@@ -26,7 +28,8 @@ RSpec.describe Latech::Cepla::Http, type: :context do
       let(:object) { double }
 
       it 'must to raise a Standard Error' do
-        expect { object.class.prepend(described_class) }.to raise_error(StandardError)
+        expect(object.class.prepend(described_class)).
+          to raise_error(StandardError)
       end
     end
   end

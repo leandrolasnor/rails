@@ -6,7 +6,7 @@ module Service
   attr_writer :unsuccessful_response
 
   def successful_body_content
-    @successful_body_content ||= { code: 0, message: 'ok'}
+    @successful_body_content ||= { code: 0, message: 'ok' }
   end
 
   def successful_response

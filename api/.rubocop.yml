@@ -4,15 +4,23 @@ require:
   - rubocop-rspec
 
 AllCops:
-  Exclude:
-    - 'db/**/*'
-
   TargetRubyVersion: 2.6.6
   TargetRailsVersion: 5.0
 
   NewCops: enable
 
   UseCache: false
+
+Layout/TrailingWhitespace:
+  Enabled: true
+  Exclude:
+    - db/migrate/**/*
+    - db/schema.rb
+
+Layout/EmptyLinesAroundBlockBody:
+  Enabled: true
+  Exclude:
+    - db/schema.rb
 
 Layout/DotPosition:
   Enabled: false
@@ -53,6 +61,16 @@ Layout/SpaceInsideHashLiteralBraces:
 Layout/LineLength:
   Enabled: true
   Max: 80
+  Exclude:
+    - spec/rails_helper.rb
+    - spec/spec_helper.rb
+    - test/test_helper.rb
+    - db/schema.rb
+    - db/migrate/**/*
+    - config/**/*
+    - bin/**/*
+    - Rakefile
+    - Gemfile
 
 Lint/BooleanSymbol:
   Enabled: true
@@ -117,6 +135,19 @@ Naming/RescuedExceptionsVariableName:
 Naming/VariableNumber:
   Enabled: false
 
+Style/HashSyntax:
+  Enabled: true
+  Exclude:
+    - db/migrate/**/*
+    - db/schema.rb
+
+Style/StringLiterals:
+  Enabled: true
+  Exclude:
+    - db/seed.rb
+    - db/schema.rb
+    - db/migrate/**/*
+
 Style/AccessorGrouping:
   EnforcedStyle: separated
 
@@ -161,18 +192,23 @@ Style/NumericLiterals:
 Style/OptionalBooleanParameter:
   Enabled: false
 
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  Exclude:
+    - db/schema.rb
+    - db/migrate/**/*
+    - bin/**/*
+
 Style/MethodCallWithArgsParentheses:
   Enabled: true
   IgnoredMethods:
     - 'raise'
     - 'render'
     - 'use'
-  AllowedMethods:
-    - 'raise'
-    - 'render'
-    - 'use'
   Exclude:
     - 'spec/**/*'
+    - db/schema.rb
+    - db/migrate/**/*
 
 Style/RaiseArgs:
   Enabled: false
