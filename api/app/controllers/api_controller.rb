@@ -26,17 +26,22 @@ class ApiController < ApplicationController
   end
 
   def error(error)
-    Rails.logger.error(error.message)
+    Rails.logger.error(error)
     render body: nil, status: :internal_server_error
   end
 
   def parameter_missing(error)
-    Rails.logger.error(error.message)
+    Rails.logger.error(error)
     render body: nil, status: :bad_request
   end
 
   def pagination_params
-    { pagination: { current_page: request.headers['current-page'] || 1, per_page: request.headers['per-page'] || 10 } }
+    {
+      pagination: {
+        current_page: request.headers['current-page'] || 1,
+        per_page: request.headers['per-page'] || 10
+      }
+    }
   end
 
   def search_pagination_params
