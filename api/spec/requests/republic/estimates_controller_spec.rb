@@ -144,8 +144,8 @@ RSpec.describe Republic::EstimatesController do
           message: [
             'Width must be greater than 0',
             'Walls must have area between 1 and 50 square meters',
-            'The total area of the doors and windows must be a
-              maximum of 50% of the wall area',
+            'The total area of the doors and windows must be a' \
+            ' maximum of 50% of the wall area',
             'Height field is badly formatted',
             'Height must be greater than 0',
             'Width field is badly formatted',
@@ -154,10 +154,10 @@ RSpec.describe Republic::EstimatesController do
             'Width must be greater than 0',
             'Windows count must be greater than or equal to 0',
             'Walls must have area between 1 and 50 square meters',
-            'The height of walls with a door must be at least 30
-              centimeters higher than the height of the door',
-            'The quantity of walls inside a hall must be a
-              value between one e four'
+            'The height of walls with a door must be at least 30' \
+            ' centimeters higher than the height of the door',
+            'The quantity of walls inside a hall must be a' \
+            ' value between one e four'
           ]
         }
       end

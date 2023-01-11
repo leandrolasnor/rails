@@ -41,7 +41,7 @@ RSpec.describe Moat::HandleGetArtistsWorker, type: :worker do
 
     before do
       allow(Moat::Artist).to receive(:all).and_raise(error)
-      allow(Rails.logger).to receive(:error).with(error.message)
+      allow(Rails.logger).to receive(:error).with(error)
       allow(ActionCable.server).
         to receive(:broadcast).
         with(params[:channel], event_error)
@@ -49,7 +49,7 @@ RSpec.describe Moat::HandleGetArtistsWorker, type: :worker do
     end
 
     it 'the rescue block will to run' do
-      expect(Rails.logger).to have_received(:error).with(error.message)
+      expect(Rails.logger).to have_received(:error).with(error)
       expect(ActionCable.server).
         to have_received(:broadcast).
         with(params[:channel], event_error)

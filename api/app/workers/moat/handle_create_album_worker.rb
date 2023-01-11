@@ -3,17 +3,27 @@
 module ::Moat
   class HandleCreateAlbumWorker
     include Sidekiq::Worker
+    include Broker
     sidekiq_options retry: false
 
     def perform(params)
       params = params.deep_symbolize_keys!
       Moat::Albums.create(params) do |album, errors|
-        ActionCable.server.broadcast(params[:channel], { type: 'ALBUM_CREATED', payload: { album: album } }) if album.present?
-        ActionCable.server.broadcast(params[:channel], { type: 'ERRORS_FROM_ALBUM_CREATED', payload: { errors: errors } }) if errors.present?
+        if album.present?
+          broker(params[:channel]) do
+            { type: 'ALBUM_CREATED', payload: { album: album } }
+          end
+        elsif errors.present?
+          broker(params[:channel]) do
+            { type: 'ERRORS_FROM_ALBUM_CREATED', payload: { errors: errors } }
+          end
+        end
       end
     rescue StandardError => error
-      Rails.logger.error(error.message)
-      ActionCable.server.broadcast(params[:channel], { type: '500', payload: { message: I18n.t(:message_internal_server_error) } })
+      Rails.logger.error(error)
+      broker(params[:channel]) do
+        { type: '500', payload: { message: I18n.t(:message_internal_server_error) } }
+      end
     end
   end
 end

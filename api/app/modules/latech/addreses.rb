@@ -37,14 +37,16 @@ module ::Latech
       def capture(params)
         captured_address = ActiveRecord::Base.transaction do
           Latech::Address.create! do |a| # ActiveRecord::RecordInvalid
-            a.zip = params.fetch(:zip) # KeyError # StandardError
+            a.zip = params.fetch(:zip) # KeyError
             a.capture do |address| # HTTParty::Error
               a.address = address.fetch(:logradouro)
               a.district = address.fetch(:bairro)
               a.city = address.fetch(:cidade)
               a.state = address.fetch(:uf)
             end
-            a.address_assignments << Latech::AddressAssignment.new(user_id: params.fetch(:user_id))
+            a.address_assignments << Latech::AddressAssignment.new(
+              user_id: params.fetch(:user_id)
+            )
           end
         end
         yield(captured_address)

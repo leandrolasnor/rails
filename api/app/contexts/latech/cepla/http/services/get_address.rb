@@ -24,17 +24,29 @@ module ::Latech
           @response = HTTParty.get(url, headers: headers) # HTTParty::Error
           parsed_response
         rescue HTTParty::Error => error
-          Rails.logger.error(error.message)
+          Rails.logger.error(error)
           raise error
         end
 
         private
 
         def parsed_response
-          return response.parsed_response.symbolize_keys if [200].include?(response.code)
+          return response.parsed_response.symbolize_keys if ok?
 
-          Rails.logger.error({ from: "Latech::Cepla::Http::Services::GetAddress.call!(zip:#{zip})", code: response.code, body: response.body })
-          raise StandardError.new(I18n.t(:error_on_http_service_from_address_capture))
+          Rails.logger.error(
+            {
+              from: "::Http::Services::GetAddress.call!(zip:#{zip})",
+              code: response.code,
+              body: response.body
+            }
+          )
+          raise StandardError.new(
+            I18n.t(:error_on_http_service_from_address_capture)
+          )
+        end
+
+        def ok?
+          response.code == 200
         end
       end
     end

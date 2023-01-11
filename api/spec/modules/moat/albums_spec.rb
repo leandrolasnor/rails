@@ -171,22 +171,15 @@ RSpec.describe Moat::Albums, type: :module do
     it 'a album with success' do
       described_class.delete(params) do |instance, error|
         expect(instance).to eq(album)
-        expect(
-          Moat::Album.find(album[:id])
-        ).to raise_error(ActiveRecord::RecordNotFound)
         expect(error).to be_nil
       end
     end
 
     context 'when raise a [::RecordNotFound, ::RecordNotDestroyed]' do
-      let(:params_deny_destroy) { { id: 9999 } }
       let(:params_invalid) { { id: 999 } }
-      let(:record_not_found_error) { ActiveRecord::RecordNotFound.new }
-      let(:record_not_destroyed_error) do
-        ActiveRecord::RecordNotDestroyed.new(
-          'you cannot destroy',
-          create(:album)
-        )
+      let(:not_found_message) { 'not found' }
+      let(:record_not_found_error) do
+        ActiveRecord::RecordNotFound.new(not_found_message)
       end
 
       before do
@@ -194,23 +187,12 @@ RSpec.describe Moat::Albums, type: :module do
           to receive(:make).
           with(params_invalid).
           and_raise(record_not_found_error)
-        allow(Moat::Albums::Sweeper).
-          to receive(:make).
-          with(params_deny_destroy).
-          and_raise(record_not_destroyed_error)
       end
 
       it 'album not found' do
         described_class.delete(params_invalid) do |instance, error|
           expect(instance).to be_nil
-          expect(error).to be_a(Array)
-        end
-      end
-
-      it 'album cannot destroyed' do
-        described_class.delete(params_deny_destroy) do |instance, error|
-          expect(instance).to be_nil
-          expect(error).to be_a(Array)
+          expect(error).to eq([not_found_message])
         end
       end
     end

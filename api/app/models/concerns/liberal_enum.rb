@@ -6,7 +6,11 @@ module LiberalEnum
   class_methods do
     def liberal_enum(attribute)
       decorate_attribute_type(attribute) do |subtype|
-        LiberalEnumType.new(attribute, public_send(attribute.to_s.pluralize), subtype)
+        LiberalEnumType.new(
+          attribute, 
+          public_send(attribute.to_s.pluralize),
+          subtype
+        )
       end
     end
   end

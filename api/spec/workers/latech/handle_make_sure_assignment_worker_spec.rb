@@ -49,7 +49,7 @@ RSpec.describe Latech::HandleMakeSureAssignmentWorker, type: :worker do
         to receive(:make_sure_assignment).
         with(params).
         and_raise(error)
-      allow(Rails.logger).to receive(:error).with(error.message)
+      allow(Rails.logger).to receive(:error).with(error)
       allow(ActionCable.server).
         to receive(:broadcast).
         with(params[:channel], event_error)
@@ -57,7 +57,7 @@ RSpec.describe Latech::HandleMakeSureAssignmentWorker, type: :worker do
     end
 
     it 'rescuing exception' do
-      expect(Rails.logger).to have_received(:error).with(error.message)
+      expect(Rails.logger).to have_received(:error).with(error)
       expect(ActionCable.server).
         to have_received(:broadcast).
         with(params[:channel], event_error)

@@ -54,7 +54,7 @@ RSpec.describe Latech::Cepla::Http::Services::GetAddress, type: :context do
         let(:parsed_response) { {} }
         let(:error) do
           {
-            from: "Latech::Cepla::Http::Services::GetAddress.call!(zip:#{zip})",
+            from: "::Http::Services::GetAddress.call!(zip:#{zip})",
             code: response.code,
             body: response.body
           }
@@ -71,8 +71,11 @@ RSpec.describe Latech::Cepla::Http::Services::GetAddress, type: :context do
         end
 
         it 'must to raise error_on_http_service_from_address_capture error' do
-          expect(service).
-            to raise_error(I18n.t(:error_on_http_service_from_address_capture))
+          expect { service }.
+            to raise_error(
+              StandardError,
+              I18n.t(:error_on_http_service_from_address_capture)
+            )
           expect(HTTParty).
             to have_received(:get).
             with(url, headers: headers)
@@ -109,12 +112,12 @@ RSpec.describe Latech::Cepla::Http::Services::GetAddress, type: :context do
             and_raise(error)
           allow(Rails.logger).
             to receive(:error).
-            with(error.message)
+            with(error)
         end
 
         it 'must to raise a HTTParty::Error' do
           expect { service }.to raise_error(HTTParty::Error)
-          expect(Rails.logger).to have_received(:error).with(error.message)
+          expect(Rails.logger).to have_received(:error).with(error)
         end
       end
     end

@@ -7,49 +7,76 @@ RSpec.describe Latech::HandleCaptureAddressWorker, type: :worker do
   let(:params) { { channel: 'channel' } }
 
   context 'on success' do
-    let(:event_success) { { type: 'CAPTURED_ADDRESS', payload: { address: ['addreses'] } } }
+    let(:event) do
+      { type: 'CAPTURED_ADDRESS', payload: { address: ['addreses'] } }
+    end
 
     before do
-      allow(Latech::Addreses).to receive(:capture).with(params).and_yield(['addreses'], nil)
-      allow(ActionCable.server).to receive(:broadcast).with(params[:channel], event_success)
+      allow(Latech::Addreses).
+        to receive(:capture).
+        with(params).
+        and_yield(['addreses'], nil)
+      allow(ActionCable.server).
+        to receive(:broadcast).
+        with(params[:channel], event)
       worker
     end
 
     it 'the Addreses module is called once with correct params' do
-      expect(Latech::Addreses).to have_received(:capture).with(params).once
-      expect(ActionCable.server).to have_received(:broadcast).with(params[:channel], event_success).once
+      expect(Latech::Addreses).to have_received(:capture).with(params)
+      expect(ActionCable.server).
+        to have_received(:broadcast).
+        with(params[:channel], event)
     end
   end
 
   context 'on error' do
-    let(:event_failure) { { type: 'ERRORS_FROM_CAPTURED_ADDRESS', payload: { errors: ['errors'] } } }
+    let(:event_failure) do
+      { type: 'ERRORS_FROM_CAPTURED_ADDRESS', payload: { errors: ['errors'] } }
+    end
 
     before do
-      allow(Latech::Addreses).to receive(:capture).with(params).and_yield(nil, ['errors'])
-      allow(ActionCable.server).to receive(:broadcast).with(params[:channel], event_failure)
+      allow(Latech::Addreses).
+        to receive(:capture).
+        with(params).
+        and_yield(nil, ['errors'])
+      allow(ActionCable.server).
+        to receive(:broadcast).
+        with(params[:channel], event_failure)
       worker
     end
 
     it 'the Addreses module is called once with incorrect params' do
-      expect(Latech::Addreses).to have_received(:capture).with(params).once
-      expect(ActionCable.server).to have_received(:broadcast).with(params[:channel], event_failure).once
+      expect(Latech::Addreses).to have_received(:capture).with(params)
+      expect(ActionCable.server).
+        to have_received(:broadcast).
+        with(params[:channel], event_failure)
     end
   end
 
   context 'on exception' do
     let(:error) { StandardError.new('Some Error') }
-    let(:event_error) { { type: '500', payload: { message: I18n.t(:message_internal_server_error) } } }
+    let(:event_error) do
+      {
+        type: '500',
+        payload: { message: I18n.t(:message_internal_server_error) }
+      }
+    end
 
     before do
       allow(Latech::Addreses).to receive(:capture).with(params).and_raise(error)
-      allow(Rails.logger).to receive(:error).with(error.message)
-      allow(ActionCable.server).to receive(:broadcast).with(params[:channel], event_error)
+      allow(Rails.logger).to receive(:error).with(error)
+      allow(ActionCable.server).
+        to receive(:broadcast).
+        with(params[:channel], event_error)
       worker
     end
 
     it 'rescuing exception' do
-      expect(Rails.logger).to have_received(:error).with(error.message).once
-      expect(ActionCable.server).to have_received(:broadcast).with(params[:channel], event_error).once
+      expect(Rails.logger).to have_received(:error).with(error)
+      expect(ActionCable.server).
+        to have_received(:broadcast).
+        with(params[:channel], event_error)
     end
   end
 end

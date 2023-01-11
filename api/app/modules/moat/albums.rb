@@ -50,8 +50,6 @@ module ::Moat
       def delete(params)
         deleted = Sweeper.make(params)
         yield(deleted, nil)
-      rescue ActiveRecord::RecordNotDestroyed => error
-        yield(nil, error.record.errors.full_messages)
       rescue ActiveRecord::RecordNotFound => error
         yield(nil, [error.message])
       end

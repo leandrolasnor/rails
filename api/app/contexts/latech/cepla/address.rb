@@ -16,7 +16,8 @@ module ::Latech
       private
 
       def captured_address
-        @captured_address ||= Latech::Cepla::Http::Services::GetAddress.call!(zip: address.zip) # HTTParty::Error
+        @captured_address ||=
+          Latech::Cepla::Http::Services::GetAddress.call!(zip: address.zip)
       end
     end
   end

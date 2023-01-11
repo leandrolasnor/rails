@@ -13,10 +13,6 @@ RSpec.describe Latech::Cepla::Http, type: :context do
 
   describe '.prepend' do
     context 'on success' do
-      before do
-        Latech::Cepla::Http::Services::GetAddress.prepend(described_class)
-      end
-
       it 'must to prepend' do
         expect(
           Latech::Cepla::Http::Services::GetAddress.ancestors.first
@@ -26,10 +22,13 @@ RSpec.describe Latech::Cepla::Http, type: :context do
 
     context 'on exception' do
       let(:object) { double }
+      let(:message_error) do
+        'Error on Latech::Cepla::Http prepended to RSpec::Mocks::Double'
+      end
 
       it 'must to raise a Standard Error' do
-        expect(object.class.prepend(described_class)).
-          to raise_error(StandardError)
+        expect { object.class.prepend(described_class) }.
+          to raise_error(StandardError, message_error)
       end
     end
   end
